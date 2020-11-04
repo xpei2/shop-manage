@@ -16,11 +16,13 @@ Vue.use(VueRouter);
 // 路由组件
 import Login from "_vie/login/Login";
 import Home from "_vie/home/Home";
+import Welcome from "_vie/home/main/Welcome";
+import Users from "_vie/home/main/users/Users";
 
 const routes = [
     {
-        path: "*",
-        redirect: "/login"
+        path: "/",
+        redirect: "/home"
     },
     {
         path: "/login",
@@ -30,7 +32,19 @@ const routes = [
     {
         path: "/home",
         name: "home",
-        component: Home
+        component: Home,
+        redirect: '/welcome',
+        children: [
+            {path: '/welcome', component: Welcome},
+            {path: '/users', component: Users},
+            {path: '/roles', },
+            {path: '/rights', },
+            {path: '/goods', },
+            {path: '/params', },
+            {path: '/categories', },
+            {path: '/orders', },
+            {path: '/reports', },
+        ]
     }
 ];
 

@@ -9,6 +9,10 @@ export function request(config) {
     // 请求拦截
     instance.interceptors.request.use(
         config => {
+            // 设置Authorization字段为token指令
+            config.headers.Authorization = window.sessionStorage.getItem(
+                "token"
+            );
             return config;
         },
         err => {
