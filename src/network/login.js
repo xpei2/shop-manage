@@ -1,12 +1,12 @@
 import { request } from "./request";
 
-export function postLogin(username, password) {
+export function postLogin(obj) {
     return request({
         url: "/login",
         method: "post",
-        params: {
-            username,
-            password
+        data: {
+            username: obj.username,
+            password: obj.password
         }
     });
 }

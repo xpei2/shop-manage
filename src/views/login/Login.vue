@@ -3,7 +3,7 @@
         <div class="login-box">
             <!-- 头像区域 -->
             <div class="avatar-box">
-                <img src="~_ats/img/logo.png" alt="" />
+                <img src="~_ats/img/login-logo.png" alt="" />
             </div>
             <!-- 登录表单区域 -->
             <el-form
@@ -60,7 +60,7 @@ export default {
                     {
                         min: 3,
                         max: 10,
-                        message: "长度在 3 到 10 个字符",
+                        message: "用户名长度在 3 到 10 个字符",
                         trigger: "blur"
                     }
                 ],
@@ -70,12 +70,7 @@ export default {
                         message: "密码不能为空",
                         trigger: "blur"
                     },
-                    {
-                        min: 6,
-                        max: 15,
-                        message: "长度在 3 到 15 个字符",
-                        trigger: "blur"
-                    }
+                    { pattern: /^(\w){6,15}$/, message: '密码由6-15个字母、数字、下划线组成', trigger: 'blur'},
                 ]
             }
         };
@@ -87,15 +82,12 @@ export default {
             this.$refs.loginForm.validate(async valid => {
                 if (!valid) return;
                 // 获取登录发送的数据，{ data: res } 为结构赋值
-                const { data: res } = await postLogin(
-                    this.loginForm.username,
-                    this.loginForm.password
-                );
+                const { data: res } = await postLogin(this.loginForm);
 
                 // 判断返回的状态，进行后续操作
                 if (res.meta.status === 200) {
                     this.$toast.success("登录成功");
-
+                    
                     // 1. 将登陆成功之后的token，保存在客户端的sessionStorage中
                     //   1.1 项目中除了登录之外的其他API接口，必须在登录之后才能访问
                     //   1.2 token只应在当前 网站打开期间有效，所以讲token保存在sessionStorage中
