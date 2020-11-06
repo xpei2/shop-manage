@@ -4,6 +4,9 @@ import {
     Form,
     FormItem,
     Input,
+    Select,
+    Option,
+    Autocomplete,
     Message,
     Container,
     Header,
@@ -24,13 +27,18 @@ import {
     Pagination,
     Dialog,
     MessageBox,
-    Loading
+
+    Tag,
+    Tree
 } from "element-ui";
 
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(FormItem);
 Vue.use(Input);
+Vue.use(Select);
+Vue.use(Option);
+Vue.use(Autocomplete)
 Vue.use(Container);
 Vue.use(Header);
 Vue.use(Aside);
@@ -49,8 +57,10 @@ Vue.use(Switch);
 Vue.use(Tooltip);
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Tag)
+Vue.use(Tree)
 
 // 全局注册提示框
 Vue.prototype.$toast = Message;
 Vue.prototype.$confirm = MessageBox.confirm;
-Vue.prototype.$loading = Loading.service;
+
