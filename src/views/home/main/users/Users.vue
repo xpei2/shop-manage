@@ -16,12 +16,12 @@
                     </el-input>
                 </el-col>
                 <el-col :span="3">
-                    <el-button type="primary" @click="openAddDialog">添加用户</el-button>
+                    <el-button type="primary" @click="addBtnClick">添加用户</el-button>
                 </el-col>
             </el-row>
             <!-- 表格数据 -->
             <el-table :data="usersList" stripe border>
-                <el-table-column label="#" width="60" type="index"></el-table-column>
+                <el-table-column label="#" width="50" type="index"></el-table-column>
                 <el-table-column prop="username" label="姓名"></el-table-column>
                 <el-table-column prop="email" label="邮箱"></el-table-column>
                 <el-table-column prop="mobile" label="电话"></el-table-column>
@@ -40,16 +40,16 @@
                     <!-- 自定义插槽 -->
                     <template slot-scope="scope">
                         <!-- 修改按钮 -->
-                        <el-tooltip class="item" effect="dark" content="修改" placement="top" :enterable="false">
-                            <el-button type="primary" icon="el-icon-edit" size="mini" @click="openEditDialog(scope.row.id)"></el-button>
+                        <el-tooltip class="item" effect="dark" content="编辑" placement="top" :enterable="false">
+                            <el-button type="primary" icon="el-icon-edit" size="mini" @click="editUserClick(scope.row.id)"></el-button>
                         </el-tooltip>
                         <!-- 删除按钮 -->
                         <el-tooltip class="item" effect="dark" content="删除" placement="top" :enterable="false">
-                            <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeUserById(scope.row.id)"></el-button>
+                            <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeUserClick(scope.row.id)"></el-button>
                         </el-tooltip>
                         <!-- 分配角色按钮 -->
                         <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
-                            <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+                            <el-button type="warning" icon="el-icon-setting" size="mini" @click="setUserRole(scope.row)"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -66,34 +66,106 @@
             >
             </el-pagination>
         </el-card>
-        <add-user-dialog 
+        <!-- 添加用户对话框 -->
+        <operate-dialog 
             v-if="dialogType === 'add'" 
-            @closeDialog="closeDialog"
-        />
-        <edit-user-dialog 
-            v-else-if="dialogType === 'edit'" 
-            :user-id="userId" 
-            @closeDialog="closeDialog"
-        />
+            operate-title="添加用户"
+            operate-label-width="70px"
+            :operate-form-model="addUserInfo"
+            :operate-form-rules="userFormRules"
+            @baseCancel="baseCancel"
+            @operateSubmit="addSubmit"
+        >
+            <!-- 插槽的表单内容 -->
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="addUserInfo.username"></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+                <el-input v-model="addUserInfo.password" type="password"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+                <el-autocomplete v-model="addUserInfo.email" :fetch-suggestions="querySearch" :trigger-on-focus="false" :hide-loading="true"></el-autocomplete>
+            </el-form-item>
+            <el-form-item label="手机" prop="mobile">
+                <el-input v-model.number="addUserInfo.mobile"></el-input>
+            </el-form-item>
+        </operate-dialog>
+        <!-- 添加编辑对话框 -->
+        <operate-dialog 
+            v-if="dialogType === 'edit'" 
+            operate-title="编辑用户信息"
+            operate-label-width="70px"
+            :operate-form-model="editUserInfo"
+            :operate-form-rules="userFormRules"
+            @baseCancel="baseCancel"
+            @operateSubmit="editSubmit"
+        >
+            <!-- 插槽的表单内容 -->
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="editUserInfo.username"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+                <el-autocomplete v-model="editUserInfo.email" :fetch-suggestions="querySearch" :trigger-on-focus="false" :hide-loading="true"></el-autocomplete>
+            </el-form-item>
+            <el-form-item label="手机" prop="mobile">
+                <el-input v-model.number="editUserInfo.mobile"></el-input>
+            </el-form-item>
+        </operate-dialog>
+        <!-- 分配角色对话框 -->
+        <set-dialog 
+            v-else-if="dialogType === 'role'"
+            set-title="分配角色"
+            set-top="25vh"
+            @baseCancel="setRoleClose" 
+            @setSubmit="setRoleSubmit"
+        >
+            <!-- 内容主体区 -->
+            <div class="set-role">
+                <p>当前用户名：{{roleUserInfo.username}}</p>
+                <p>当前角色名：{{roleUserInfo.role_name}}</p>
+                <div>
+                    <span>分配新角色：</span>
+                    <el-select v-model="roleValue" placeholder="请选择">
+                        <el-option
+                        v-for="item in rolesNameList"
+                        :key="item.id"
+                        :label="item.roleName"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </div>
+        </set-dialog>
     </div>
 </template>
 
 <script>
 // 导入公共组件
 import BreadCrumb from '_com/main/BreadCrumb'
-
-// 导入子组件
-import AddUserDialog from './children/AddUserDialog'
-import EditUserDialog from './children/EditUserDialog'
+import OperateDialog from '_com/main/OperateDialog';
+import SetDialog from '_com/main/SetDialog';
 
 // 导入数据请求
-import { getUsers, putUserState, deleteUser } from '_new/users';
+import { 
+    getUsersData, 
+    postAddUser, 
+    putUserState, 
+    getUserInfo, 
+    putUserEdit, 
+    deleteUser,
+    putSetRole
+    } from '_new/users';
+import { getRolesData } from '_new/power'
+
+// 导入自定义表单手机验证规则
+import { checkMobile } from '_con/utils'
+
 export default {
     name: 'Users',
-        components: {
+    components: {
         BreadCrumb,
-        AddUserDialog,
-        EditUserDialog,
+        OperateDialog,
+        SetDialog,
     },
     data() {
         return {
@@ -112,31 +184,49 @@ export default {
             // 定义选择用户的id
             userId: '',
             // 对话框类型，判断类型显示那种对话框
-            dialogType: ''
+            dialogType: '',
+            // 添加用户的信息
+            addUserInfo: {
+                username: '',
+                password: '',
+                email: '',
+                mobile: '',
+            },
+            // 编辑用户的信息
+            editUserInfo: {},
+            // 选中用户的表单验证规则，添加/编辑对话框的规则
+            userFormRules:{
+                username: [
+                    {required: true, message: '请输入用户名', trigger: 'blur'},
+                    {min: 3, max: 10, message: '用户名的长度在3-10个字符之间', trigger: 'blur'}
+                ],
+                password: [
+                    {required: true, message: '密码不能为空', trigger: 'blur'},
+                    { pattern: /^(\w){6,15}$/, message: '密码由6-15个字母、数字、下划线组成', trigger: 'blur'},
+                ],
+                email: [
+                    {required: true, message: '请输入邮箱', trigger: 'blur'},
+                    {type: 'email', message: '请输入合法的邮箱', trigger: 'submit'}
+                ],
+                mobile: [
+                    { required: true,  validator: checkMobile, trigger: 'blur'}
+                ]
+            },
+            // 角色列表所有数据
+            rolesNameList: [],
+            // 需要分配角色用户的信息
+            roleUserInfo: {},
+            // 需要分配的角色
+            roleValue: ''
         };
     },
     created() {
-        // 获取数据
+        // 获取用户列表数据
         this.getUsersList();
+        // 获取角色列表数据
+        this.getRolesList()
     },
     methods: {
-        // 获取Users数据方法
-        async getUsersList() {
-            await getUsers(
-                this.queryInfo.query,
-                this.queryInfo.pagenum,
-                this.queryInfo.pagesize
-            ).then(res => {
-                const usersRes = res.data;
-                if (usersRes.meta.status !== 200) {
-                    return this.$toast.error(usersRes.meta.msg);
-                } else {
-                    this.usersList = usersRes.data.users;
-                    this.total = usersRes.data.total;
-                }
-            });
-        },
-
         // 监听用户状态的改变
         async userStateChanged(obj) {
             await putUserState(obj.id, obj.mg_state).then(res => {
@@ -151,30 +241,84 @@ export default {
                 }
             });
         },
-        // 添加用户对话框打开事件
-        openAddDialog() {
+        // 邮箱提示规则
+        querySearch(queryString, callback) {
+            const restaurants = [
+                {"value": "@qq.com"},
+                {"value": "@126.com"},
+                {"value": "@163.com"},
+                {"value": "@sohu.com"}
+            ];
+            let results = JSON.parse(JSON.stringify(restaurants));
+            results.forEach(item=>{
+                item.value = `${queryString}${item.value}`
+            })
+            // 调用 callback 返回建议列表的数据
+            callback(results);
+        },
+        // 添加按钮点击事件
+        addBtnClick(){
             this.dialogType = 'add'
         },
-
-        // 修改用户对话框打开事件
-        openEditDialog(uid) {
-            this.userId = `${uid}`;
-            this.dialogType = 'edit'
-        },
-        
         // 对话框关闭事件
-        closeDialog() {
+        baseCancel() {
             this.dialogType = ''
         },
-
-        // 删除用户事件
-        async removeUserById(uid){
+        // 添加对话框提交事件
+        async addSubmit(){
+            await postAddUser(this.addUserInfo).then(res=>{
+                    const addUserRes = res.data;
+                    if (addUserRes.meta.status !== 201) {
+                    return this.$toast.error(addUserRes.meta.msg)
+                    }else {
+                    this.$toast.success(addUserRes.meta.msg)
+                    // 对话框隐藏
+                    this.baseCancel();
+                    // 重新获取数据
+                    this.getUsersList();
+                }
+            })
+        },
+        // 编辑用户信息按钮点击事件，通过id和get请求查询对应信息
+        async editUserClick(id){
+            this.dialogType = 'edit';
+            this.userId = id;
+            await getUserInfo(id).then(res=>{
+                const getUserRes = res.data
+                if (getUserRes.meta.status !== 200) {
+                    return this.$toast.error(getUserRes.meta.msg)
+                }else {
+                    this.$toast.success(getUserRes.meta.msg)
+                    this.editUserInfo = getUserRes.data
+                }
+            })
+        },
+        // 编辑按钮提交事件
+        async editSubmit() {
+            await putUserEdit(parseInt(this.userId), this.editUserInfo).then(
+                res => {
+                    const editUserRes = res.data;
+                    if (editUserRes.meta.status !== 200) {
+                        return this.$toast.error(editUserRes.meta.msg);
+                    } else {
+                        // 提示修改成功
+                        this.$toast.success(editUserRes.meta.msg);
+                        // 对话框隐藏
+                        this.baseCancel();
+                        // 父组件重新获取数据
+                        this.getUsersList();
+                    }
+                }
+            );
+        },
+        // 删除用户点击事件
+        async removeUserClick(id){
             await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                    deleteUser(uid).then(res=>{                        
+                    deleteUser(id).then(res=>{                        
                         if (res.data.meta.status !== 200) {
                             return this.$toast.error(res.data.meta.msg)
                         }else {
@@ -183,12 +327,49 @@ export default {
                             if(this.total % this.queryInfo.pagesize == 1){
                                 this.queryInfo.pagenum--
                             }
+                            // 重新获取数据
                             this.getUsersList();
                         }
                     })
                 }).catch(() => {
                     this.$toast.info('已取消删除')       
             });
+        },
+
+        // 分配角色按钮点击事件
+        setUserRole(info){
+            this.dialogType = 'role'
+            this.roleUserInfo = info;
+        },
+
+        // 分配角色按钮取消事件，注意取消不是提交的baseCancel事件了
+        setRoleClose(){
+            // 关闭对话框
+            this.baseCancel();
+            // 点击获取到的用户信息清空
+            this.roleUserInfo = {};
+            // 选择的角色id清空
+            this.roleValue = ''
+        },
+
+        // 分配角色提交按钮
+        async setRoleSubmit(){
+            if(!this.roleValue) {
+                return this.$toast.error('请选择需要分配的角色')
+            }else {
+               await putSetRole(this.roleUserInfo.id, this.roleValue).then(res=>{
+                    const putRoleRes = res.data;
+                    if (putRoleRes.meta.status !== 200) {
+                        return this.$toast.error(putRoleRes.meta.msg);
+                    } else {
+                        this.$toast.success(putRoleRes.meta.msg)
+                        // 对话框隐藏
+                        this.baseCancel();
+                        // 重新获取数据
+                        this.getUsersList();
+                    }
+                })
+            }
         },
 
         // 监听pagesize改变的事件
@@ -203,10 +384,43 @@ export default {
             //显示页面跳转并重新获取数据
             this.queryInfo.pagenum = val;
             this.getUsersList();
-        }
+        },
+        
+        // 获取Users数据方法
+        async getUsersList() {
+            await getUsersData(
+                this.queryInfo.query,
+                this.queryInfo.pagenum,
+                this.queryInfo.pagesize
+            ).then(res => {
+                const usersRes = res.data;
+                if (usersRes.meta.status !== 200) {
+                    return this.$toast.error(usersRes.meta.msg);
+                } else {
+                    this.usersList = usersRes.data.users;
+                    this.total = usersRes.data.total;
+                }
+            });
+        },
+        // 获取角色列表数据
+        async getRolesList() {
+            await getRolesData().then(res => {
+                const rolesRes = res.data;
+                if (rolesRes.meta.status !== 200) {
+                    return this.$toast.error(rolesRes.meta.msg);
+                } else {
+                    this.rolesNameList = rolesRes.data
+                }
+            });
+        },
     }
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.set-role {
+    p{
+        margin: 15px 0;
+    }
+}
 </style>

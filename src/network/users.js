@@ -1,7 +1,7 @@
 import { request } from "./request";
 
 // 获取users数据
-export function getUsers(query,pagenum,pagesize) {
+export function getUsersData(query,pagenum,pagesize) {
     return request({
         url: "/users",
         params: {
@@ -59,5 +59,16 @@ export function deleteUser(id){
     return request({
         url: `/users/${id}`,
         method: 'delete'
+    })
+}
+
+// 分配角色提交
+export function putSetRole(id, rid){
+    return request({
+        url: `/users/${id}/role`,
+        method: 'put',
+        data: {
+            rid
+        }
     })
 }

@@ -29,7 +29,7 @@
                     v-for="subItem in item.children"
                     :index="`/${subItem.path}`"
                     :key="subItem.id"
-                    @click="menuItemClick(`/${subItem.path}`)"
+                    @click="menuItemClick(`/${subItem.path}`, item.authName, subItem.authName)"
                 >
                     <!-- 二级菜单模板区域 -->
                     <template slot="title">
@@ -45,6 +45,9 @@
 </template>
 
 <script>
+// 导入Vuex
+import { mapMutations } from 'vuex';
+
 export default {
     name: 'HomeAside',
     props: {
@@ -62,9 +65,22 @@ export default {
         }
     },
     created(){
-        this.activePath = window.sessionStorage.getItem('menuItemPath');
+        // 设置本地临时缓存的菜单栏path
+        let path = window.sessionStorage.getItem('menuItemPath');
+        if(path) {
+            this.activePath = path
+        }
+        // 每次刷新页面获取本地临时缓存导航数据，将保存的字符串转换为对象
+        let nav = JSON.parse(window.sessionStorage.getItem('asideNav'))
+        if (nav) {
+            this.setSessionAsideNav(nav);
+        }
     },
     methods: {
+        ...mapMutations([
+            'setSessionAsideNav',
+            'setBreadCrumb'
+        ]),
         // 折叠按钮点击事件
         toggleClick() {
             console.log(this.$route);
@@ -73,9 +89,15 @@ export default {
             this.$emit('toggleClick', this.isCollapse)
         },
         // 侧栏列表点击的时候保存高亮路径
-        menuItemClick(path) {
+        menuItemClick(path, nav1, nav2) {
             window.sessionStorage.setItem('menuItemPath', path);
             // window.sessionStorage.setItem('menuItemPath', this.$route.path);
+            const asideNav = {
+                secondNav: nav1,
+                thirdNav: nav2
+            }
+            //提交改变状态管理
+            this.setBreadCrumb(asideNav);
         }
     }
 };

@@ -18,6 +18,8 @@ import Login from "_vie/login/Login";
 import Home from "_vie/home/Home";
 import Welcome from "_vie/home/main/Welcome";
 import Users from "_vie/home/main/users/Users";
+import Rights from "_vie/home/main/power/Rights";
+import Roles from "_vie/home/main/power/Roles";
 
 const routes = [
     {
@@ -37,8 +39,8 @@ const routes = [
         children: [
             {path: '/welcome', component: Welcome},
             {path: '/users', component: Users},
-            {path: '/roles', },
-            {path: '/rights', },
+            {path: '/roles', component: Roles},
+            {path: '/rights', component: Rights},
             {path: '/goods', },
             {path: '/params', },
             {path: '/categories', },
