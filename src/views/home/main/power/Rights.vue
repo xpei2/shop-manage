@@ -4,7 +4,7 @@
         <!-- 卡片视图 -->
         <el-card>
             <!-- 表格数据 -->
-            <el-table :data="rightsList" stripe border max-height="700">
+            <el-table :data="rightsList" stripe border :max-height="tableMaxHeigth">
                 <el-table-column label="#" width="60" type="index"></el-table-column>
                 <el-table-column prop="authName" label="权限名称"></el-table-column>
                 <el-table-column prop="path" label="路径"></el-table-column>
@@ -23,8 +23,11 @@
 <script>
 // 导入公共组件
 import BreadCrumb from '_com/main/BreadCrumb';
-
+// 导入axios
 import { getRightsData } from '_new/power';
+
+// 导入混入
+import { tableHeightMixin } from '_con/mixin';
 
 export default {
     name: 'Rights',
@@ -36,6 +39,7 @@ export default {
             rightsList: []
         };
     },
+    mixins: [tableHeightMixin],
     created() {
         this.getRightsList();
     },

@@ -27,9 +27,10 @@ import {
     Pagination,
     Dialog,
     MessageBox,
-
+    Loading,
     Tag,
-    Tree
+    Tree,
+    Cascader
 } from "element-ui";
 
 Vue.use(Button);
@@ -59,6 +60,8 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(Loading);
+Vue.use(Cascader);
 
 // 全局注册提示框
 Vue.prototype.$toast = Message;

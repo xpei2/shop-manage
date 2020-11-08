@@ -32,3 +32,23 @@ export function checkMobile(rule, value, callback) {
         callback(new Error("请输入合法的手机"));
     }
 }
+
+// 递归调用数组给子数据添加属性和值
+// 四个api参数：data：数组， subData：子数组，key：添加的属性，value：添加的属性值
+export function setAttribute(obj) {
+    if (obj.data && Array.isArray(obj.data)) {
+        obj.data.map(item => {
+            if (item[obj.subData] && item[obj.subData][length] !== 0) {
+                item[obj.key] = obj.value;
+                setAttribute({
+                    data: item[obj.subData],
+                    subData: obj.subData,
+                    key: obj.key,
+                    value: obj.value
+                });
+            }
+            return item;
+        });
+    }
+    return obj.data;
+}

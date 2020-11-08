@@ -10,7 +10,7 @@
                 </el-col>
             </el-row>
             <!-- 表格数据 -->
-            <el-table :data="rolesList" stripe border max-height="700">
+            <el-table :data="rolesList" stripe border :max-height="tableMaxHeigth">
                 <right-expand @removeRightById="removeRightById" />
                 <el-table-column label="#" width="50" type="index"></el-table-column>
                 <el-table-column prop="roleName" width="200" label="角色名称"></el-table-column>
@@ -19,9 +19,9 @@
                     <!-- 自定义插槽 -->
                     <template slot-scope="scope">
                         <!-- 修改按钮 -->
-                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="editRolesClick(scope.row.id)">编辑</el-button>
+                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="editClick(scope.row.id)">编辑</el-button>
                         <!-- 删除按钮 -->
-                        <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeRolesClick(scope.row.id)">删除</el-button>
+                        <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeClick(scope.row.id)">删除</el-button>
                         <!-- 分配角色按钮 -->
                         <el-button type="warning" icon="el-icon-setting" size="mini" @click="setRightClick(scope.row)">分配权限</el-button>
                     </template>
@@ -34,7 +34,7 @@
             operate-title="添加角色"
             operate-label-width="100px"
             :operate-form-model="roleFormModel"
-            :operate-form-rules="rolesFormRules"
+            :operate-form-rules="roleFormRules"
             @baseCancel="baseCancel"
             @operateSubmit="addSubmit"
         >
@@ -51,7 +51,7 @@
             operate-title="编辑角色信息"
             operate-label-width="100px"
             :operate-form-model="roleFormModel"
-            :operate-form-rules="rolesFormRules"
+            :operate-form-rules="roleFormRules"
             @baseCancel="baseCancel"
             @operateSubmit="editSubmit"
         >
@@ -102,6 +102,9 @@ import {
     postSetRight 
     } from '_new/power';
 
+// 导入混入
+import { tableHeightMixin } from '_con/mixin';
+
 export default {
     name: 'Roles',
     components: {
@@ -118,17 +121,32 @@ export default {
             rightsTree: [],
             // 被点击id的已拥有权限树
             defRightKeys: [],
-            // 权限树匹配键
-            rightsProps: {
-                label: 'authName',
-                children: 'children'
-            },
             // 被点击的角色id
-            roleId: '',
+            getId: '',
             // 添加/编辑角色数据
             roleFormModel:{},
-            // 添加角色的验证规则
-            rolesFormRules:{
+            // 对话框类型，判断类型显示那种对话框
+            dialogType: ''
+        };
+    },
+    mixins: [tableHeightMixin],
+    created() {
+        // 获取角色列表数据
+        this.getRolesList();
+        // 获取权限树
+        this.getRightsTree()
+    },
+    computed:{
+            // 权限树匹配键
+        rightsProps(){
+            return {
+                label: 'authName',
+                children: 'children'
+            }
+        },
+        // 添加角色的验证规则
+        roleFormRules(){
+            return {
                 roleName: [
                     {required: true, message: '请输入角色名', trigger: 'blur'},
                     {min: 2, max: 10, message: '角色名的长度在2-10个字符之间', trigger: 'blur'}
@@ -137,16 +155,8 @@ export default {
                     {required: true, message: '描述不能为空', trigger: 'blur'},
                     { min: 2, max: 20, message: '描述的长度在2-20个字符之间', trigger: 'blur'},
                 ]
-            },
-            // 对话框类型，判断类型显示那种对话框
-            dialogType: ''
-        };
-    },
-    created() {
-        // 获取角色列表数据
-        this.getRolesList();
-        // 获取权限树
-        this.getRightsTree()
+            }
+        },
     },
     methods: {
         // 添加按钮点击事件
@@ -176,10 +186,10 @@ export default {
         },
 
         // 编辑角色信息按钮点击事件，通过id和get请求查询对应信息
-        async editRolesClick(id){
+        async editClick(id){
             this.dialogType = 'edit';
             // 点击更新当前id
-            this.roleId = id;
+            this.getId = id;
             await getRolesInfo(id).then(res=>{
                 const getRoleRes = res.data
                 if (getRoleRes.meta.status !== 200) {
@@ -192,7 +202,7 @@ export default {
         },
         // 编辑按钮提交事件
         async editSubmit(){
-            await putEditRoles(parseInt(this.roleId), this.roleFormModel).then(res => {
+            await putEditRoles(parseInt(this.getId), this.roleFormModel).then(res => {
                 const editRoleRes = res.data;
                 if (editRoleRes.meta.status !== 200) {
                     return this.$toast.error('更新失败！');
@@ -208,7 +218,7 @@ export default {
             });
         },
         // 删除角色点击事件
-        async removeRolesClick(id){
+        async removeClick(id){
             await this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -218,7 +228,8 @@ export default {
                         if (res.data.meta.status !== 200) {
                             return this.$toast.error(res.data.meta.msg)
                         }else {
-                            this.$toast.success(res.data.meta.msg)
+                            this.$toast.success(res.data.meta.msg);
+                            // 重新获取数据
                             this.getRolesList();
                         }
                     })
@@ -242,7 +253,7 @@ export default {
             // 点击清空权限数组
             this.defRightKeys = [];
             // 点击更新当前id
-            this.roleId = role.id;
+            this.getId = role.id;
             if(this.rightsTree.length !== 0) {
                 this.$toast.success('权限列表获取成功！');
                 this.getLeafKeys(role, this.defRightKeys)
@@ -256,7 +267,7 @@ export default {
                 ...this.$refs.rightsTreeRef.getCheckedKeys(), 
                 ...this.$refs.rightsTreeRef.getHalfCheckedKeys()
                 ].join(',');
-            await postSetRight(this.roleId, keys).then(res => {
+            await postSetRight(this.getId, keys).then(res => {
                 const setRightRes = res.data;
                 if (setRightRes.meta.status !== 200) {
                     return this.$toast.error(setRightRes.meta.msg);

@@ -6,6 +6,20 @@
   "description": "电商管理系统图标库",
   "glyphs": [
     {
+      "icon_id": "5315864",
+      "name": "加",
+      "font_class": "jia",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "6095690",
+      "name": "减",
+      "font_class": "jian",
+      "unicode": "e6d4",
+      "unicode_decimal": 59092
+    },
+    {
       "icon_id": "212782",
       "name": "show-password ",
       "font_class": "showpassword",

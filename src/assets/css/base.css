@@ -62,7 +62,7 @@ ol {
   list-style: none;
 }
 #app {
-    min-width: 1399px;
+    min-width: 1200px;
 }
 .el-breadcrumb {
     margin-bottom: 20px;
@@ -71,9 +71,21 @@ ol {
 .el-pagination {
     margin-top: 20px;
 }
-.el-autocomplete{
+.el-autocomplete,
+.el-cascader {
     width: 100%;
 }
 .el-card {
     box-shadow: 0 1px 1px rgba(0,0,0,.15) !important;
+}
+
+/* 隐藏级联选择器的单选按钮 */
+.cate-cascader .el-cascader-menu {
+    min-width: 160px;
+    height: 200px;
+}
+
+.cate-cascader .el-radio {
+    width: 0 !important;
+    visibility: hidden;
 }

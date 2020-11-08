@@ -20,6 +20,11 @@ import Welcome from "_vie/home/main/Welcome";
 import Users from "_vie/home/main/users/Users";
 import Rights from "_vie/home/main/power/Rights";
 import Roles from "_vie/home/main/power/Roles";
+import Goods from "_vie/home/main/goods/Goods";
+import Params from "_vie/home/main/goods/Params";
+import Cate from "_vie/home/main/goods/Cate";
+import Orders from "_vie/home/main/orders/Orders";
+import Reports from "_vie/home/main/reports/Reports";
 
 const routes = [
     {
@@ -41,11 +46,11 @@ const routes = [
             {path: '/users', component: Users},
             {path: '/roles', component: Roles},
             {path: '/rights', component: Rights},
-            {path: '/goods', },
-            {path: '/params', },
-            {path: '/categories', },
-            {path: '/orders', },
-            {path: '/reports', },
+            {path: '/goods', component: Goods},
+            {path: '/params', component: Params},
+            {path: '/categories', component: Cate},
+            {path: '/orders', component: Orders},
+            {path: '/reports', component: Reports},
         ]
     }
 ];
