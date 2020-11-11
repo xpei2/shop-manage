@@ -16,7 +16,7 @@
                     </el-input>
                 </el-col>
                 <el-col :span="3">
-                    <el-button type="primary" @click="addBtnClick">添加用户</el-button>
+                    <el-button type="primary" @click="addClick">添加用户</el-button>
                 </el-col>
             </el-row>
             <!-- 表格数据 -->
@@ -49,7 +49,7 @@
                         </el-tooltip>
                         <!-- 分配角色按钮 -->
                         <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
-                            <el-button type="warning" icon="el-icon-setting" size="mini" @click="setUserRole(scope.row)"></el-button>
+                            <el-button type="warning" icon="el-icon-setting" size="mini" @click="roleClick(scope.row)"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -66,21 +66,22 @@
             >
             </el-pagination>
         </el-card>
-        <!-- 添加用户对话框 -->
-        <operate-dialog 
-            v-if="dialogType === 'add'" 
-            operate-title="添加用户"
-            operate-label-width="70px"
-            :operate-form-model="userFormModel"
-            :operate-form-rules="userFormRules"
-            @baseCancel="baseCancel"
-            @operateSubmit="addSubmit"
+        <!-- 添加/编辑用户对话框 -->
+        <from-dialog 
+            :is-dialog="isDialog"
+            :dialog-title="userDialogTitle"
+            :dialog-type="dialogType"
+            :dialog-form-model="userFormModel"
+            :dialog-form-rules="userFormRules"
+            @cancelClick="dialogClose"
+            @addSubmitClick="addSubmit"
+            @editSubmitClick="editSubmit"
         >
             <!-- 插槽的表单内容 -->
             <el-form-item label="用户名" prop="username">
-                <el-input v-model="userFormModel.username"></el-input>
+                <el-input v-model="userFormModel.username" :disabled="dialogType === 'edit'"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password">
+            <el-form-item v-if="dialogType === 'add'" label="密码" prop="password">
                 <el-input v-model="userFormModel.password" type="password"></el-input>
             </el-form-item>
             <el-form-item label="邮箱" prop="email">
@@ -89,34 +90,13 @@
             <el-form-item label="手机" prop="mobile">
                 <el-input v-model.number="userFormModel.mobile"></el-input>
             </el-form-item>
-        </operate-dialog>
-        <!-- 添加编辑对话框 -->
-        <operate-dialog 
-            v-if="dialogType === 'edit'" 
-            operate-title="编辑用户信息"
-            operate-label-width="70px"
-            :operate-form-model="userFormModel"
-            :operate-form-rules="userFormRules"
-            @baseCancel="baseCancel"
-            @operateSubmit="editSubmit"
-        >
-            <!-- 插槽的表单内容 -->
-            <el-form-item label="用户名" prop="username">
-                <el-input v-model="userFormModel.username"></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱" prop="email">
-                <el-autocomplete v-model="userFormModel.email" :fetch-suggestions="querySearch" :trigger-on-focus="false" :hide-loading="true"></el-autocomplete>
-            </el-form-item>
-            <el-form-item label="手机" prop="mobile">
-                <el-input v-model.number="userFormModel.mobile"></el-input>
-            </el-form-item>
-        </operate-dialog>
+        </from-dialog>
         <!-- 分配角色对话框 -->
         <set-dialog 
-            v-else-if="dialogType === 'role'"
-            set-title="分配角色"
-            set-top="25vh"
-            @baseCancel="setRoleClose" 
+            :is-dialog="isRoleDialog"
+            dialog-title="分配角色"
+            dialog-top="25vh"
+            @cancelClick="setRoleClose" 
             @setSubmit="setRoleSubmit"
         >
             <!-- 内容主体区 -->
@@ -142,7 +122,7 @@
 <script>
 // 导入公共组件
 import BreadCrumb from '_com/main/BreadCrumb'
-import OperateDialog from '_com/main/OperateDialog';
+import FromDialog from '_com/main/FromDialog';
 import SetDialog from '_com/main/SetDialog';
 
 // 导入数据请求
@@ -167,7 +147,7 @@ export default {
     name: 'Users',
     components: {
         BreadCrumb,
-        OperateDialog,
+        FromDialog,
         SetDialog,
     },
     data() {
@@ -186,8 +166,6 @@ export default {
             },
             // 定义选择用户的id
             getId: '',
-            // 对话框类型，判断类型显示那种对话框
-            dialogType: '',
             // 编辑/添加用户的信息
             userFormModel: {},
             // 角色列表所有数据
@@ -195,7 +173,13 @@ export default {
             // 需要分配角色用户的信息
             setRoleInfo: {},
             // 需要分配的角色
-            setRoleValue: ''
+            setRoleValue: '',
+            // 对话框类型，判断类型显示那种对话框
+            dialogType: '',
+            // 添加/编辑对话框是否显示
+            isDialog: false,
+            // 添加对话框是否显示
+            isRoleDialog: false
         };
     },
     mixins: [tableHeightMixin],
@@ -206,6 +190,10 @@ export default {
         this.getRolesList()
     },
     computed:{
+        // 对话框标题名字
+        userDialogTitle() {
+            return this.dialogType === 'add' ? '添加用户' : '编辑用户信息'
+        },
         // 选中用户的表单验证规则，添加/编辑对话框的规则
         userFormRules(){
             return {
@@ -228,6 +216,25 @@ export default {
         }
     },
     methods: {
+        // 添加/编辑对话框显示事件
+        dialogShow(){
+            this.isDialog = true
+        },
+
+        // 对话框关闭事件
+        dialogClose() {
+            this.isDialog = this.isDialog && false;
+            this.isRoleDialog = this.isRoleDialog && false;
+        },
+
+        // 添加点击事件
+        addClick(){
+            // 设置对话框类型为add
+            this.dialogType = 'add'
+            // 对话框显示
+            this.dialogShow();
+        },
+
         // 邮箱提示规则
         querySearch(queryString, callback) {
             const restaurants = [
@@ -243,36 +250,97 @@ export default {
             // 调用 callback 返回建议列表的数据
             callback(results);
         },
-        // 添加按钮点击事件
-        addBtnClick(){
-            this.dialogType = 'add'
+        
+        // 添加用户提交事件
+        addSubmit(){
+            this.postAddUser(this.userFormModel)
         },
-        // 对话框关闭事件
-        baseCancel() {
-            this.dialogType = ''
+
+        // 监听用户状态的改变
+        userStateChanged(obj) {
+            this.putUserState(obj.id, obj.mg_state)
         },
-        // 添加对话框提交事件
-        async addSubmit(){
-            await postAddUser(this.userFormModel).then(res=>{
+
+        // 编辑按钮点击事件
+        editClick(userId){
+            // 设置对话框类型为edit
+            this.dialogType = 'edit';
+            // 对话框显示
+            this.dialogShow();
+            // 点击更新当前userId
+            this.getId = userId;
+            // 获取用户信息
+            this.getUserInfo(userId)
+        },
+
+        // 编辑提交事件
+        editSubmit() {
+            this.putUserEdit(this.getId, this.userFormModel)
+        },
+
+        // 删除用户点击事件
+        removeClick(userId){
+            this.deleteUser(userId)
+        },
+
+        // 分配角色按钮点击事件
+        roleClick(info){
+            this.isRoleDialog = true
+            this.setRoleInfo = info;
+        },
+
+        // 分配角色按钮取消事件，注意取消不是提交的dialogClose事件了
+        setRoleClose(){
+            // 关闭对话框
+            this.dialogClose();
+            // 清空获取到的用户信息
+            this.setRoleInfo = {};
+            // 清空选择的角色id
+            this.setRoleValue = ''
+        },
+
+        // 分配角色提交按钮
+        setRoleSubmit(){
+            this.putSetRole(this.setRoleInfo.id, this.setRoleValue)
+        },
+
+        // 监听pagesize改变的事件
+        handleSizeChange(val) {
+            //设置每页显示多少条，并重新获取数据
+            this.queryInfo.pagesize = val;
+            this.getUsersList();
+        },
+        
+        // 监听页码值改变的事件
+        handleCurrentChange(val) {
+            //显示页面跳转并重新获取数据
+            this.queryInfo.pagenum = val;
+            this.getUsersList();
+        },
+
+        // 添加用户方法
+        async postAddUser(obj){
+            await postAddUser(obj).then(res=>{
                     const addUserRes = res.data;
                     if (addUserRes.meta.status !== 201) {
                     return this.$toast.error(addUserRes.meta.msg)
                     }else {
                     this.$toast.success(addUserRes.meta.msg)
-                    // 对话框隐藏
-                    this.baseCancel();
+                    // 关闭对话框
+                    this.dialogClose();
                     // 重新获取数据
                     this.getUsersList();
                 }
             })
         },
-        // 监听用户状态的改变
-        async userStateChanged(obj) {
-            await putUserState(obj.id, obj.mg_state).then(res => {
+
+        // 更新用户状态方法
+        async putUserState(userId, userState) {
+            await putUserState(userId, userState).then(res => {
                 if (res.data.meta.status !== 200) {
                     // 如果更新失败，则还原页面中的状态
                     setTimeout(() => {
-                        obj.mg_state = !obj.mg_state;
+                        userState = !userState;
                     }, 1000);
                     return this.$toast.error('更新用户状态失败！');
                 }else{
@@ -280,11 +348,10 @@ export default {
                 }
             });
         },
-        // 编辑用户信息按钮点击事件，通过id和get请求查询对应信息
-        async editClick(id){
-            this.dialogType = 'edit';
-            this.getId = id;
-            await getUserInfo(id).then(res=>{
+
+        // 通过id和get请求查询对应信息
+        async getUserInfo(userId){
+            await getUserInfo(userId).then(res=>{
                 const getUserRes = res.data
                 if (getUserRes.meta.status !== 200) {
                     return this.$toast.error(getUserRes.meta.msg)
@@ -294,9 +361,10 @@ export default {
                 }
             })
         },
-        // 编辑按钮提交事件
-        async editSubmit() {
-            await putUserEdit(this.getId, this.userFormModel).then(
+
+        // 编辑用户提交方法
+        async putUserEdit(userId, obj) {
+            await putUserEdit(userId, obj).then(
                 res => {
                     const editUserRes = res.data;
                     if (editUserRes.meta.status !== 200) {
@@ -304,22 +372,23 @@ export default {
                     } else {
                         // 提示修改成功
                         this.$toast.success(editUserRes.meta.msg);
-                        // 对话框隐藏
-                        this.baseCancel();
-                        // 父组件重新获取数据
+                        // 关闭对话框
+                        this.dialogClose();
+                        // 重新获取数据
                         this.getUsersList();
                     }
                 }
             );
         },
-        // 删除用户点击事件
-        async removeClick(id){
+
+        // 删除用户方法
+        async deleteUser(userId){
             await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                    deleteUser(id).then(res=>{                        
+                    deleteUser(userId).then(res=>{                        
                         if (res.data.meta.status !== 200) {
                             return this.$toast.error(res.data.meta.msg)
                         }else {
@@ -337,54 +406,24 @@ export default {
             });
         },
 
-        // 分配角色按钮点击事件
-        setUserRole(info){
-            this.dialogType = 'role'
-            this.setRoleInfo = info;
-        },
-
-        // 分配角色按钮取消事件，注意取消不是提交的baseCancel事件了
-        setRoleClose(){
-            // 关闭对话框
-            this.baseCancel();
-            // 点击获取到的用户信息清空
-            this.setRoleInfo = {};
-            // 选择的角色id清空
-            this.setRoleValue = ''
-        },
-
         // 分配角色提交按钮
-        async setRoleSubmit(){
-            if(!this.setRoleValue) {
-                return this.$toast.error('请选择需要分配的角色')
+        async putSetRole(userId, roleId){
+            if(!roleId) {
+                return this.$toast.warning('请选择需要分配的角色！')
             }else {
-               await putSetRole(this.setRoleInfo.id, this.setRoleValue).then(res=>{
+               await putSetRole(userId, roleId).then(res=>{
                     const putRoleRes = res.data;
                     if (putRoleRes.meta.status !== 200) {
                         return this.$toast.error(putRoleRes.meta.msg);
                     } else {
                         this.$toast.success(putRoleRes.meta.msg)
-                        // 对话框隐藏
-                        this.baseCancel();
+                        // 关闭对话框，且情况选择器
+                        this.setRoleClose();
                         // 重新获取数据
                         this.getUsersList();
                     }
                 })
             }
-        },
-
-        // 监听pagesize改变的事件
-        handleSizeChange(val) {
-            //设置每页显示多少条，并重新获取数据
-            this.queryInfo.pagesize = val;
-            this.getUsersList();
-        },
-        
-        // 监听页码值改变的事件
-        handleCurrentChange(val) {
-            //显示页面跳转并重新获取数据
-            this.queryInfo.pagenum = val;
-            this.getUsersList();
         },
         
         // 获取Users数据方法
@@ -403,6 +442,7 @@ export default {
                 }
             });
         },
+
         // 获取角色列表数据
         async getRolesList() {
             await getRolesData().then(res => {

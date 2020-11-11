@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div id="cate">
         <bread-crumb />
         <!-- 卡片视图 -->
         <el-card>
             <!-- 添加角色按钮区域 -->
             <el-row>
                 <el-col>
-                    <el-button type="primary" @click="addBtnClick">添加分类</el-button>
+                    <el-button type="primary" @click="addClick">添加分类</el-button>
                 </el-col>
             </el-row>
             <!-- 表格数据 -->
@@ -61,53 +61,41 @@
             >
             </el-pagination>
         </el-card>
-        <!-- 添加分类对话框 -->
-        <operate-dialog 
-            v-if="dialogType === 'add'"
-            operate-title="添加分类"
-            operate-label-width="100px"
-            :operate-form-model="cateFormModel"
-            :operate-form-rules="cateFormRules"
-            @baseCancel="baseCancel"
-            @operateSubmit="addSubmit"
+        <!-- 添加编辑分类对话框 -->
+        <from-dialog 
+            :is-dialog="isDialog"
+            dialog-label-width="100px"
+            :dialog-title="cateDialogTitle"
+            :dialog-type="dialogType"
+            :dialog-form-model="cateFormModel"
+            :dialog-form-rules="cateFormRules"
+            @cancelClick="dialogClose"
+            @addSubmitClick="addSubmit"
+            @editSubmitClick="editSubmit"
         >
             <el-form-item label="分类名称" prop="cat_name">
                 <el-input v-model="cateFormModel.cat_name"></el-input>
             </el-form-item>
-            <el-form-item label="父级分类">
+            <el-form-item label="父级分类" v-if="dialogType === 'add'">
                 <!-- options数据源 -->
                 <el-cascader
                 v-model="selectdKeys"
                 :options="cateParentList"
                 clearable
                 ref="cateCascaderRef"
-                :props="cascaderProps"
+                :props="cateCasProps"
                 @change="cascaderCateChanged"
                 popper-class="cate-cascader"
                 ></el-cascader>
             </el-form-item>
-        </operate-dialog>
-        <!-- 编辑分类对话框 -->
-        <operate-dialog 
-            v-if="dialogType === 'edit'"
-            operate-title="编辑分类信息"
-            operate-label-width="100px"
-            :operate-form-model="cateFormModel"
-            :operate-form-rules="cateFormRules"
-            @baseCancel="baseCancel"
-            @operateSubmit="editSubmit"
-        >
-            <el-form-item label="分类名称" prop="cat_name">
-                <el-input v-model="cateFormModel.cat_name"></el-input>
-            </el-form-item>
-        </operate-dialog>
+        </from-dialog>
     </div>
 </template>
 
 <script>
 // 导入公共组件
 import BreadCrumb from '_com/main/BreadCrumb';
-import OperateDialog from '_com/main/OperateDialog';
+import FromDialog from '_com/main/FromDialog';
 
 // 导入axios方法
 import { 
@@ -125,11 +113,13 @@ export default {
     name: 'Cate',
     components: {
         BreadCrumb,
-        OperateDialog,
+        FromDialog,
     },
     data() {
         return {
             isLoading: true,
+            // 添加/编辑对话框是否显示
+            isDialog: false,
             // 分类列表数据
             cateList: [],
             // 数据总数
@@ -176,8 +166,12 @@ export default {
         }, 1000);
     },
     computed:{
+        // 对话框标题名字
+        cateDialogTitle() {
+            return this.dialogType === 'add' ? '添加分类' : '编辑分类信息'
+        },
         // 级联选择器的配置对象
-        cascaderProps(){
+        cateCasProps(){
             return {
                 value: 'cat_id',
                 label: 'cat_name',
@@ -196,20 +190,28 @@ export default {
         }
     },
     methods: {
-        // 添加按钮点击事件
-        addBtnClick(){
-            this.dialogType = 'add';
-            // 获取父级分类列表数据
-            this.getParentCateList()
+        // 添加/编辑对话框显示事件
+        dialogShow() {
+            this.isDialog = true;
         },
-
         // 对话框关闭事件
-        baseCancel() {
-            this.dialogType = '';
+        dialogClose() {
+            this.isDialog = false;
             // 清空数据
             this.selectdKeys = [];
             this.cateFormModel = {}
         },
+
+        // 添加点击事件
+        addClick(){
+            // 设置对话框类型为add
+            this.dialogType = 'add';
+            // 对话框显示
+            this.dialogShow();
+            // 获取父级分类列表数据
+            this.getParentCateList()
+        },
+
         // 级联选择器改变事件
         cascaderCateChanged(){
             //dropDownVisible 为element源码中的data属性
@@ -226,75 +228,28 @@ export default {
             }
         },
         // 添加对话框提交事件
-        async addSubmit() {
-            await postAddCate(this.cateFormModel).then(res => {
-                const addCateRes = res.data;
-                if (addCateRes.meta.status !== 201) {
-                    return this.$toast.error(addCateRes.meta.msg);
-                } else {
-                    this.$toast.success(addCateRes.meta.msg);
-                    // 对话框隐藏
-                    this.baseCancel();
-                    // 重新获取数据
-                    this.getCateList();
-                }
-            });
+        addSubmit() {
+            this.postAddCate(this.cateFormModel)
         },
-        // 编辑分类信息按钮点击事件，通过id和get请求查询对应信息
-        async editClick(id){
+
+        // 编辑分类信息点击事件
+        editClick(cateId){
+            // 设置对话框类型为edit
             this.dialogType = 'edit';
-            this.getId = id;
-            await getCateInfo(id).then(res=>{
-                const getCateRes = res.data
-                if (getCateRes.meta.status !== 200) {
-                    return this.$toast.error(getCateRes.meta.msg)
-                }else {
-                    this.$toast.success(getCateRes.meta.msg);
-                    this.cateFormModel = getCateRes.data
-                }
-            });
+            // 对话框显示
+            this.dialogShow();
+            this.getId = cateId;
+            this.getCateInfo(cateId)
         },
-        // 编辑按钮提交事件
-        async editSubmit() {
-            await putCateEdit(this.getId, this.cateFormModel.cat_name).then(
-                res => {
-                    const editCateRes = res.data;
-                    if (editCateRes.meta.status !== 200) {
-                        return this.$toast.error(editCateRes.meta.msg);
-                    } else {
-                        // 提示修改成功
-                        this.$toast.success(editCateRes.meta.msg);
-                        // 对话框隐藏
-                        this.baseCancel();
-                        // 父组件重新获取数据
-                        this.getCateList();
-                    }
-                }
-            );
+
+        // 编辑分类提交事件
+        editSubmit() {
+            this.putCateEdit(this.getId, this.cateFormModel.cat_name)
         },
-        // 删除分类点击事件
-        async removeClick(id){
-            await this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-                }).then(() => {
-                    deleteCate(id).then(res=>{                        
-                        if (res.data.meta.status !== 200) {
-                            return this.$toast.error(res.data.meta.msg)
-                        }else {
-                            this.$toast.success(res.data.meta.msg)
-                            // 添加数据后，获取数据前如果尾页只剩一个用户，则跳转到前一页
-                            if(this.total && this.total % this.queryInfo.pagesize == 1){
-                                this.queryInfo.pagenum--
-                            }
-                            // 重新获取数据
-                            this.getCateList();
-                        }
-                    })
-                }).catch(() => {
-                    this.$toast.info('已取消删除')       
-            });
+
+        // 删除点击事件
+        removeClick(cateId){
+            this.deleteCate(cateId)
         },
 
         // 监听pagesize改变的事件
@@ -311,9 +266,82 @@ export default {
             this.getCateList();
         },
         
+        // 添加提交方法
+        async postAddCate(obj) {
+            await postAddCate(obj).then(res => {
+                const addCateRes = res.data;
+                if (addCateRes.meta.status !== 201) {
+                    return this.$toast.error(addCateRes.meta.msg);
+                } else {
+                    this.$toast.success(addCateRes.meta.msg);
+                    // 关闭对话框
+                    this.dialogClose();
+                    // 重新获取数据
+                    this.getCateList();
+                }
+            });
+        },
+
+        // 通过id和get请求查询对应信息
+        async getCateInfo(cateId){
+            await getCateInfo(cateId).then(res=>{
+                const getCateRes = res.data
+                if (getCateRes.meta.status !== 200) {
+                    return this.$toast.error(getCateRes.meta.msg)
+                }else {
+                    this.$toast.success(getCateRes.meta.msg);
+                    this.cateFormModel = getCateRes.data
+                }
+            });
+        },
+
+        // 编辑分类方法
+        async putCateEdit(cateId, cateName) {
+            await putCateEdit(cateId, cateName).then(
+                res => {
+                    const editCateRes = res.data;
+                    if (editCateRes.meta.status !== 200) {
+                        return this.$toast.error(editCateRes.meta.msg);
+                    } else {
+                        // 提示修改成功
+                        this.$toast.success(editCateRes.meta.msg);
+                        // 关闭对话框
+                        this.dialogClose();
+                        // 重新获取数据
+                        this.getCateList();
+                    }
+                }
+            );
+        },
+
+        // 删除分类方法
+        async deleteCate(cateId){
+            await this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(() => {
+                    deleteCate(cateId).then(res=>{                        
+                        if (res.data.meta.status !== 200) {
+                            return this.$toast.error(res.data.meta.msg)
+                        }else {
+                            this.$toast.success(res.data.meta.msg)
+                            // 添加数据后，获取数据前如果尾页只剩一个用户，则跳转到前一页
+                            if(this.total && this.total % this.queryInfo.pagesize == 0){
+                                this.queryInfo.pagenum--
+                            }
+                            // 重新获取数据
+                            this.getCateList();
+                        }
+                    })
+                }).catch(() => {
+                    this.$toast.info('已取消删除')       
+            });
+        },
+        
         // 获取Cate数据方法
         async getCateList() {
-            await getCateData(this.queryInfo).then(res => {
+            await getCateData(this.queryInfo.type, this.queryInfo.pagenum, this.queryInfo.pagesize).then(res => {
                 const cateRes = res.data;
                 if (cateRes.meta.status !== 200) {
                     return this.$toast.error(cateRes.meta.msg);
@@ -326,7 +354,7 @@ export default {
         },
         // 获取父级分类数据
         async getParentCateList() {
-            await getCateData({type: 2}).then(res => {
+            await getCateData(2).then(res => {
                 const cateRes = res.data;
                 if (cateRes.meta.status !== 200) {
                     return this.$toast.error(cateRes.meta.msg);
@@ -340,6 +368,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-cascader {
+    width: 100%;
+}
 /* 有子节点，未展开 */
 .el-table /deep/ .el-table__expand-icon .el-icon-arrow-right:before{
     content: "\e723";

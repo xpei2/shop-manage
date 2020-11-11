@@ -1,12 +1,13 @@
 <template>
     <!-- 列表添加/编辑的对话框 -->
     <el-dialog
-        :title="setTitle"
-        :visible="true"
+        :title="dialogTitle"
+        :visible.sync="isDialog"
         width="50%"
         :close-on-click-modal="false"
         :show-close="false"
-        :top="setTop"
+        :top="dialogTop"
+        @close="dialogClosed"
     >
         <slot></slot>
         <!-- 底部区域 -->
@@ -16,17 +17,23 @@
         </span>
     </el-dialog>
 </template>
+
 <script>
 export default {
-    name: 'RightsTree',
+    name: 'SetDialog',
     props: {
+        // 是否显示对话框
+        isDialog: {
+            type: Boolean,
+            default: false
+        },
         // 对话框标题
-        setTitle: {
+        dialogTitle: {
             type: String,
             default: ''
         },
         // 对话框距离顶部距离
-        setTop: {
+        dialogTop: {
             type: String,
             default: '15vh'
         },
@@ -35,13 +42,17 @@ export default {
         // 添加用户的表单的取消按钮
         cancelClick() {
             //提交给父组件的关闭事件
-            this.$emit('baseCancel', false);
+            this.$emit('cancelClick');
         },
         // 添加用户的表单的确认按钮
         submitClick() {
             // 提交确认事件
             this.$emit('setSubmit');
-        }
+        },
+        // 监听对话框关闭事件
+        dialogClosed(){
+            this.$emit('setDialogClose')
+        },
     }
 };
 </script>

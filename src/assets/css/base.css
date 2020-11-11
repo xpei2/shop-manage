@@ -71,8 +71,7 @@ ol {
 .el-pagination {
     margin-top: 20px;
 }
-.el-autocomplete,
-.el-cascader {
+.el-autocomplete{
     width: 100%;
 }
 .el-card {

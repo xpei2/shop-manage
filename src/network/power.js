@@ -27,17 +27,17 @@ export function postAddRoles(obj){
 }
 
 // 获取角色信息
-export function getRolesInfo(id) {
+export function getRolesInfo(roleId) {
     return request({
-        url: `/roles/${id}`,
+        url: `/roles/${roleId}`,
         method: 'get',
     })
 }
 
 // 编辑角色信息
-export function putEditRoles(id, obj) {
+export function putEditRoles(roleId, obj) {
     return request({
-        url: `/roles/${id}`,
+        url: `/roles/${roleId}`,
         method: 'put',
         data: {
             roleName: obj.roleName,
@@ -47,9 +47,9 @@ export function putEditRoles(id, obj) {
 }
 
 // 删除角色
-export function deleteRoles(id){
+export function deleteRoles(roleId){
     return request({
-        url: `/roles/${id}`,
+        url: `/roles/${roleId}`,
         method: 'delete'
     })
 }

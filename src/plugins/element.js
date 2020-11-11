@@ -30,7 +30,10 @@ import {
     Loading,
     Tag,
     Tree,
-    Cascader
+    Cascader,
+    Alert,
+    Tabs,
+    TabPane
 } from "element-ui";
 
 Vue.use(Button);
@@ -62,6 +65,9 @@ Vue.use(Tag)
 Vue.use(Tree)
 Vue.use(Loading);
 Vue.use(Cascader);
+Vue.use(Alert);
+Vue.use(Tabs);
+Vue.use(TabPane);
 
 // 全局注册提示框
 Vue.prototype.$toast = Message;

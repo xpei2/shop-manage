@@ -13,9 +13,9 @@ export function getUsersData(query,pagenum,pagesize) {
 }
 
 // 更新users的状态
-export function putUserState(uid, type) {
+export function putUserState(uuserId, type) {
     return request({
-        url:`/users/${uid}/state/${type}`,
+        url:`/users/${uuserId}/state/${type}`,
         method: 'put'
     })
 }
@@ -35,17 +35,17 @@ export function postAddUser(obj) {
 }
 
 // 获取用户信息
-export function getUserInfo(id) {
+export function getUserInfo(userId) {
     return request({
-        url: `/users/${id}`,
+        url: `/users/${userId}`,
         method: 'get',
     })
 }
 
 // 编辑用户信息
-export function putUserEdit(id, obj) {
+export function putUserEdit(userId, obj) {
     return request({
-        url: `/users/${id}`,
+        url: `/users/${userId}`,
         method: 'put',
         data: {
             email: obj.email,
@@ -55,17 +55,17 @@ export function putUserEdit(id, obj) {
 }
 
 // 删除用户
-export function deleteUser(id){
+export function deleteUser(userId){
     return request({
-        url: `/users/${id}`,
+        url: `/users/${userId}`,
         method: 'delete'
     })
 }
 
 // 分配角色提交
-export function putSetRole(id, rid){
+export function putSetRole(userId, rid){
     return request({
-        url: `/users/${id}/role`,
+        url: `/users/${userId}/role`,
         method: 'put',
         data: {
             rid

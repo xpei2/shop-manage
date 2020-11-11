@@ -1,13 +1,13 @@
 import { request } from "./request";
 
-// 获取users数据
-export function getCateData(obj) {
+// 获取Cate数据
+export function getCateData(type, pagenum, pagesize) {
     return request({
         url: "/categories",
         params: {
-            type: obj.type,
-            pagenum: obj.pagenum ? obj.pagenum : '',
-            pagesize: obj.pagesize ? obj.pagesize : ''
+            type,
+            pagenum,
+            pagesize
         }
     });
 }
@@ -27,17 +27,17 @@ export function postAddCate(obj) {
 }
 
 // 获取分类信息
-export function getCateInfo(id) {
+export function getCateInfo(cateId) {
     return request({
-        url: `/categories/${id}`,
+        url: `/categories/${cateId}`,
         method: 'get',
     })
 }
 
-// 编辑用户信息
-export function putCateEdit(id, cat_name) {
+// 编辑分类信息
+export function putCateEdit(cateId, cat_name) {
     return request({
-        url: `/categories/${id}`,
+        url: `/categories/${cateId}`,
         method: 'put',
         data: {
             cat_name
@@ -45,10 +45,68 @@ export function putCateEdit(id, cat_name) {
     })
 }
 
-// 删除用户
-export function deleteCate(id){
+// 删除分类
+export function deleteCate(cateId){
     return request({
-        url: `/categories/${id}`,
+        url: `/categories/${cateId}`,
+        method: 'delete'
+    })
+}
+
+
+// 获取参数数据
+export function getParamsData(cateId, sel){
+    return request({
+        url: `categories/${cateId}/attributes`,
+        params:{
+            sel
+        }
+    })
+}
+
+// 添加动态参数或者静态属性
+export function postAddParams(cateId, obj){
+    return request({
+        url: `categories/${cateId}/attributes`,
+        method: 'post',
+        data:{
+            attr_name: obj.attr_name,
+            attr_sel: obj.attr_sel,
+            attr_vals: obj.attr_vals ? obj.attr_vals : '',
+        }
+    })
+}
+
+// 获取参数信息
+export function getParamsInfo(cateId, attrId, attr_sel, attr_vals) {
+    return request({
+        url: `/categories/${cateId}/attributes/${attrId}`,
+        method: 'get',
+        params: {
+            attr_sel,
+            attr_vals
+        }
+    })
+}
+
+// 编辑参数信息
+export function putParamsEdit(cateId, attrId, obj) {
+    return request({
+        url:  `/categories/${cateId}/attributes/${attrId}`,
+        method: 'put',
+        data: {
+            attr_name: obj.attr_name,
+            attr_sel: obj.attr_sel,
+            attr_vals: Array.isArray(obj.attr_vals) ? obj.attr_vals.join(' ') : obj.attr_vals
+        }
+    })
+}
+
+
+// 删除参数
+export function deleteParams(cateId, attrId){
+    return request({
+        url: `/categories/${cateId}/attributes/${attrId}`,
         method: 'delete'
     })
 }
