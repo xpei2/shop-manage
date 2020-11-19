@@ -14,17 +14,18 @@ VueRouter.prototype.replace = function replace(location) {
 Vue.use(VueRouter);
 
 // 路由组件
-import Login from "_vie/login/Login";
-import Home from "_vie/home/Home";
-import Welcome from "_vie/home/main/Welcome";
-import Users from "_vie/home/main/users/Users";
-import Rights from "_vie/home/main/power/Rights";
-import Roles from "_vie/home/main/power/Roles";
-import Goods from "_vie/home/main/goods/Goods";
-import Params from "_vie/home/main/goods/Params";
-import Cate from "_vie/home/main/goods/Cate";
-import Orders from "_vie/home/main/orders/Orders";
-import Reports from "_vie/home/main/reports/Reports";
+const Login = ()=>import("_vie/login/Login");
+const Home = ()=>import("_vie/home/Home");
+const Welcome = ()=>import("_vie/home/main/Welcome");
+const Users = ()=>import("_vie/home/main/users/Users");
+const Rights = ()=>import("_vie/home/main/power/Rights");
+const Roles = ()=>import("_vie/home/main/power/Roles");
+const Goods = ()=>import("_vie/home/main/goods/Goods");
+const Params = ()=>import("_vie/home/main/goods/Params");
+const HandleGoods = ()=>import("_com/main/HandleGoods");
+const Cate = ()=>import("_vie/home/main/goods/Cate");
+const Orders = ()=>import("_vie/home/main/orders/Orders");
+const Reports = ()=>import("_vie/home/main/reports/Reports");
 
 const routes = [
     {
@@ -47,6 +48,7 @@ const routes = [
             {path: '/roles', component: Roles},
             {path: '/rights', component: Rights},
             {path: '/goods', component: Goods},
+            {path: '/goods/:type/:id?', component: HandleGoods},
             {path: '/params', component: Params},
             {path: '/categories', component: Cate},
             {path: '/orders', component: Orders},

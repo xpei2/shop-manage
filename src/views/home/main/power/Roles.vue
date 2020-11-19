@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="roles">
         <bread-crumb />
         <!-- 卡片视图 -->
         <el-card>
@@ -11,7 +11,7 @@
             </el-row>
             <!-- 表格数据 -->
             <el-table :data="rolesList" stripe border :max-height="tableMaxHeigth">
-                <right-expand @removeRightById="removeRightById" />
+                <roles-expand @removeRightById="removeRightById" />
                 <el-table-column label="#" width="50" type="index"></el-table-column>
                 <el-table-column prop="roleName" width="200" label="角色名称"></el-table-column>
                 <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
@@ -76,7 +76,7 @@ import FromDialog from '_com/main/FromDialog';
 import SetDialog from '_com/main/SetDialog';
 
 // 子组件
-import RightExpand from './children/RightExpand'
+import RolesExpand from './roles-children/RolesExpand'
 import { 
     getRolesData, 
     postAddRoles, 
@@ -95,7 +95,7 @@ export default {
     components: {
         BreadCrumb,
         FromDialog,
-        RightExpand,
+        RolesExpand,
         SetDialog
     },
     data() {
@@ -350,6 +350,7 @@ export default {
                 if (rolesRes.meta.status !== 200) {
                     return this.$toast.error(rolesRes.meta.msg);
                 } else {
+                    this.$toast.success('获取角色列表成功！');
                     this.rolesList = rolesRes.data;
                 }
             });

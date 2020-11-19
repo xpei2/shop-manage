@@ -79,7 +79,7 @@
             <el-form-item label="父级分类" v-if="dialogType === 'add'">
                 <!-- options数据源 -->
                 <el-cascader
-                v-model="selectdKeys"
+                v-model="goods_cat"
                 :options="cateParentList"
                 clearable
                 ref="cateCascaderRef"
@@ -143,7 +143,7 @@ export default {
                 cat_level: 0
             },
             // 级联选择器选中的父级分类id列表
-            selectdKeys: [],
+            goods_cat: [],
         };
     },
     mixins: [tableHeightMixin],
@@ -198,7 +198,7 @@ export default {
         dialogClose() {
             this.isDialog = false;
             // 清空数据
-            this.selectdKeys = [];
+            this.goods_cat = [];
             this.cateFormModel = {}
         },
 
@@ -218,9 +218,9 @@ export default {
             this.$refs.cateCascaderRef.dropDownVisible = false;
             // 判断选中级联的model参数数组长度，如果大于一，说明选中了级别，否则未选级别
             // 如果长度=1，则选择了一级，如果=2则选择了二级
-            if(this.selectdKeys.length > 0) {
-                this.cateFormModel.cat_pid = this.selectdKeys[this.selectdKeys.length - 1]
-                this.cateFormModel.cat_level = this.selectdKeys.length;
+            if(this.goods_cat.length > 0) {
+                this.cateFormModel.cat_pid = this.goods_cat[this.goods_cat.length - 1]
+                this.cateFormModel.cat_level = this.goods_cat.length;
                 // return
             }else {
                 this.cateFormModel.cat_pid = 0;
@@ -346,6 +346,7 @@ export default {
                 if (cateRes.meta.status !== 200) {
                     return this.$toast.error(cateRes.meta.msg);
                 } else {
+                    this.$toast.success('获取商品分类列表成功！');
                     this.total = cateRes.data.total;
                     this.isLoading = false
                     this.cateList = cateRes.data.result

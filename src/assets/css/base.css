@@ -88,3 +88,13 @@ ol {
     width: 0 !important;
     visibility: hidden;
 }
+
+.el-steps .el-step__title {
+    font-size: 13px;
+}
+.el-form--label-top .el-form-item .el-form-item__label {
+    padding-bottom: 0;
+}
+.ql-editor{
+    min-height: 300px;
+}

@@ -11,12 +11,13 @@
                 type="warning"
             >
             </el-alert>
+            <!-- 级联选择器，选择商品 -->
             <el-row class="cate-select">
                 <el-col>
                     <span>选择商品分类：</span>
                     <!-- 选择商品分类 -->
                     <el-cascader
-                        v-model="selectdKeys"
+                        v-model="goods_cat"
                         :options="cateList"
                         clearable
                         ref="cateCascaderRef"
@@ -26,6 +27,7 @@
                     ></el-cascader>
                 </el-col>
             </el-row>
+            <!-- 页签选择器，选择参数 -->
             <el-tabs v-model="paramsSel" @tab-click="handleClick">
                 <!-- 添加动态参数页签 -->
                 <el-tab-pane label="动态参数" name="many"></el-tab-pane>
@@ -36,7 +38,7 @@
             <params-table
                 :params-list="paramsList"
                 :params-sel="paramsSel"
-                :selectd-keys="selectdKeys"
+                :selectd-keys="goods_cat"
                 @addClick="addClick"
                 @editClick="editClick"
                 @removeClick="removeParams"
@@ -72,8 +74,8 @@ import BreadCrumb from '_com/main/BreadCrumb';
 import FromDialog from '_com/main/FromDialog';
 
 // 导入子组件
-import ParamsTable from './children/ParamsTable';
-import ParamsExpand from './children/ParamsExpand';
+import ParamsTable from './params-children/ParamsTable';
+import ParamsExpand from './params-children/ParamsExpand';
 
 // 导入axios方法
 import {
@@ -110,7 +112,7 @@ export default {
             // 编辑/添加参数的信息，两个id必须配置初始为0，因为接口要求不能为空
             paramsFormModel: {},
             // 级联选择器选中的父级分类id列表
-            selectdKeys: []
+            goods_cat: []
         };
     },
     created() {
@@ -142,7 +144,7 @@ export default {
 
         // 获取分类id
         getCateId() {
-            return this.selectdKeys.length === 3 ? this.selectdKeys[2] : null;
+            return this.goods_cat.length === 3 ? this.goods_cat[2] : null;
         },
         // 编辑/添加参数的验证规则
         paramsFormRules() {
@@ -167,10 +169,10 @@ export default {
         // 级联选择器改变事件
         cascaderCateChanged() {
             // 证明选中的不是三级分类
-            if (this.selectdKeys.length !== 3) {
+            if (this.goods_cat.length !== 3) {
                 this.$toast.warning('只允许选择三级分类！');
                 // 清空级联选择器数据
-                this.selectdKeys = [];
+                this.goods_cat = [];
                 // 清空表格数据
                 this.paramsList = [];
                 return;
@@ -338,6 +340,7 @@ export default {
                         '获取数据失败，请检查是否选择了分类！'
                     );
                 } else {
+                    this.$toast.success('获取分类参数成功！');
                     paramsRes.data.forEach(item => {
                         // 将attr_vals属性转换为数组，便于展示
                         item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : [];

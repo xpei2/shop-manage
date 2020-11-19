@@ -6,9 +6,10 @@ Vue.use(Vuex)
 
 const state = {
     // 面包屑导航数据
-    breadCrumbTxt: {
-        secondNav: '',
-        thirdNav: ''
+    breadCrumb: {
+        nav1: '',
+        nav2: '',
+        nav3: ''
     },
 }
 

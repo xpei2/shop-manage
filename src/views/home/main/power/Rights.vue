@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="rights">
         <bread-crumb />
         <!-- 卡片视图 -->
         <el-card>
@@ -51,6 +51,7 @@ export default {
                 if (rightsRes.meta.status !== 200) {
                     return this.$toast.error(rightsRes.meta.msg);
                 } else {
+                    this.$toast.success('获取权限列表成功！');
                     this.rightsList = rightsRes.data;
                 }
             });

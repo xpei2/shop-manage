@@ -83,7 +83,6 @@ export default {
         ]),
         // 折叠按钮点击事件
         toggleClick() {
-            console.log(this.$route);
             this.isCollapse = !this.isCollapse;
             // 提交折叠按钮点击事件，并传递给父组件折叠状态
             this.$emit('toggleClick', this.isCollapse)
@@ -93,8 +92,9 @@ export default {
             window.sessionStorage.setItem('menuItemPath', path);
             // window.sessionStorage.setItem('menuItemPath', this.$route.path);
             const asideNav = {
-                secondNav: nav1,
-                thirdNav: nav2
+                nav1,
+                nav2,
+                nav3: '',
             }
             //提交改变状态管理
             this.setBreadCrumb(asideNav);

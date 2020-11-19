@@ -13,6 +13,7 @@ export function getCateData(type, pagenum, pagesize) {
 }
 
 
+
 // 添加分类
 export function postAddCate(obj) {
     return request({
@@ -27,17 +28,17 @@ export function postAddCate(obj) {
 }
 
 // 获取分类信息
-export function getCateInfo(cateId) {
+export function getCateInfo(goodsId) {
     return request({
-        url: `/categories/${cateId}`,
+        url: `/categories/${goodsId}`,
         method: 'get',
     })
 }
 
 // 编辑分类信息
-export function putCateEdit(cateId, cat_name) {
+export function putCateEdit(goodsId, cat_name) {
     return request({
-        url: `/categories/${cateId}`,
+        url: `/categories/${goodsId}`,
         method: 'put',
         data: {
             cat_name
@@ -46,18 +47,18 @@ export function putCateEdit(cateId, cat_name) {
 }
 
 // 删除分类
-export function deleteCate(cateId){
+export function deleteCate(goodsId){
     return request({
-        url: `/categories/${cateId}`,
+        url: `/categories/${goodsId}`,
         method: 'delete'
     })
 }
 
 
 // 获取参数数据
-export function getParamsData(cateId, sel){
+export function getParamsData(goodsId, sel){
     return request({
-        url: `categories/${cateId}/attributes`,
+        url: `categories/${goodsId}/attributes`,
         params:{
             sel
         }
@@ -65,9 +66,9 @@ export function getParamsData(cateId, sel){
 }
 
 // 添加动态参数或者静态属性
-export function postAddParams(cateId, obj){
+export function postAddParams(goodsId, obj){
     return request({
-        url: `categories/${cateId}/attributes`,
+        url: `categories/${goodsId}/attributes`,
         method: 'post',
         data:{
             attr_name: obj.attr_name,
@@ -78,9 +79,9 @@ export function postAddParams(cateId, obj){
 }
 
 // 获取参数信息
-export function getParamsInfo(cateId, attrId, attr_sel, attr_vals) {
+export function getParamsInfo(goodsId, attrId, attr_sel, attr_vals) {
     return request({
-        url: `/categories/${cateId}/attributes/${attrId}`,
+        url: `/categories/${goodsId}/attributes/${attrId}`,
         method: 'get',
         params: {
             attr_sel,
@@ -90,9 +91,9 @@ export function getParamsInfo(cateId, attrId, attr_sel, attr_vals) {
 }
 
 // 编辑参数信息
-export function putParamsEdit(cateId, attrId, obj) {
+export function putParamsEdit(goodsId, attrId, obj) {
     return request({
-        url:  `/categories/${cateId}/attributes/${attrId}`,
+        url:  `/categories/${goodsId}/attributes/${attrId}`,
         method: 'put',
         data: {
             attr_name: obj.attr_name,
@@ -104,9 +105,55 @@ export function putParamsEdit(cateId, attrId, obj) {
 
 
 // 删除参数
-export function deleteParams(cateId, attrId){
+export function deleteParams(goodsId, attrId){
     return request({
-        url: `/categories/${cateId}/attributes/${attrId}`,
+        url: `/categories/${goodsId}/attributes/${attrId}`,
+        method: 'delete'
+    })
+}
+
+// 获取商品数据
+export function getGoodsData(query, pagenum, pagesize) {
+    return request({
+        url: "/goods",
+        params: {
+            query,
+            pagenum,
+            pagesize
+        }
+    });
+}
+
+// 添加商品
+export function postAddGoods(obj) {
+    return request({
+        url: '/goods',
+        method: 'post',
+        data: obj
+    })
+}
+
+// 获取商品信息
+export function getGoodsInfo(goodsId) {
+    return request({
+        url: `/goods/${goodsId}`,
+        method: 'get',
+    })
+}
+
+// 编辑商品信息
+export function putGoodsEdit(goodsId, obj) {
+    return request({
+        url: `/goods/${goodsId}`,
+        method: 'put',
+        data: obj
+    })
+}
+
+// 删除商品
+export function deleteGoods(goodsId){
+    return request({
+        url: `/goods/${goodsId}`,
         method: 'delete'
     })
 }

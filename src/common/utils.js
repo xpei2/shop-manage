@@ -33,6 +33,7 @@ export function checkMobile(rule, value, callback) {
     }
 }
 
+
 // 递归调用数组给子数据添加属性和值
 // 四个api参数：data：数组， subData：子数组，key：添加的属性，value：添加的属性值
 export function setAttribute(obj) {
@@ -51,4 +52,40 @@ export function setAttribute(obj) {
         });
     }
     return obj.data;
+}
+
+
+// 时间格式化
+export function formatDate(date, fmt) {
+  // 获取年份
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+  }
+
+  let o = {
+    "M+": date.getMonth() + 1,
+    "d+": date.getDate(),
+    "h+": date.getHours(),
+    "m+": date.getMinutes(),
+    "s+": date.getSeconds()
+  };
+
+  for (let k in o) {
+    if (new RegExp(`(${k})`).test(fmt)) {
+      let str = o[k] + "";
+      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? str : padLeftZero(str));
+    }
+  }
+
+  return fmt;
+}
+
+function padLeftZero(str) {
+  return ("00" + str).substr(str.length);
+}
+
+// 图片类型的正则判断
+export function imageRegExp(str) {
+    const pattern = /^image\/(jpg|jpeg|png)$/
+    return pattern.test(str)
 }

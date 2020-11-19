@@ -13,7 +13,7 @@
             <!-- 右侧主体 -->
             <el-main>
                 <!-- 路由占位符 -->
-                <router-view/>
+                <router-view v-if="isRouterAlive"/>
             </el-main>
         </el-container>
     </el-container>
@@ -29,8 +29,15 @@ import { getMenus } from '_new/menus';
 
 export default {
     name: 'Home',
+    provide() {
+        return {
+            // 创建一个依赖，可以刷新路由页面
+            againAddGoods: this.againAddGoods
+        }
+    },
     data() {
         return {
+            isRouterAlive: true,
             menuList: [],
             // 第三方图标数组
             iconList: [
@@ -52,6 +59,13 @@ export default {
         this.getMenus();
     },
     methods: {
+        // 刷新添加商品的路由页面
+        againAddGoods() {
+            this.isRouterAlive = false;
+            this.$nextTick(()=>{
+                this.isRouterAlive = true;
+            })
+        },
         // 接受子组件折叠点击事件，判断状态设置aside的宽度
         toggleClick(bol){
             this.isAsideTogglet = bol
