@@ -11,7 +11,7 @@
                     placeholder="请输入内容" 
                     v-model="queryInfo.query" 
                     clearable 
-                    @clear="getGoodsList" 
+                    @clear="getUsersList" 
                     @keyup.enter.native="getUsersList">
                         <el-button
                             slot="append"
@@ -126,9 +126,9 @@
 
 <script>
 // 导入公共组件
-import BreadCrumb from '_com/main/BreadCrumb'
-import FromDialog from '_com/main/FromDialog';
-import SetDialog from '_com/main/SetDialog';
+import BreadCrumb from '_com/main/bread-crumb/BreadCrumb'
+import FromDialog from '_com/main/dialog/FromDialog';
+import SetDialog from '_com/main/dialog/SetDialog';
 
 // 导入数据请求
 import { 

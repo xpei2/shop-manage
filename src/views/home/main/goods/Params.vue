@@ -70,8 +70,8 @@
 
 <script>
 // 导入公共组件
-import BreadCrumb from '_com/main/BreadCrumb';
-import FromDialog from '_com/main/FromDialog';
+import BreadCrumb from '_com/main/bread-crumb/BreadCrumb';
+import FromDialog from '_com/main/dialog/FromDialog';
 
 // 导入子组件
 import ParamsTable from './params-children/ParamsTable';

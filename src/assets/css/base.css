@@ -83,8 +83,11 @@ ol {
     min-width: 160px;
     height: 200px;
 }
+.address-cascader .el-cascader-menu {
+    height: 500px;
+}
 
-.cate-cascader .el-radio {
+.el-cascader-panel .el-radio {
     width: 0 !important;
     visibility: hidden;
 }

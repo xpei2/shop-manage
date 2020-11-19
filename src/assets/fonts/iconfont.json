@@ -6,6 +6,34 @@
   "description": "电商管理系统图标库",
   "glyphs": [
     {
+      "icon_id": "10299090",
+      "name": "未支付",
+      "font_class": "weizhifu",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "3765321",
+      "name": "银行卡",
+      "font_class": "-",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "9186709",
+      "name": "微信",
+      "font_class": "weixin",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "14110604",
+      "name": "支付宝",
+      "font_class": "zhifubao",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
       "icon_id": "5315864",
       "name": "加",
       "font_class": "jia",

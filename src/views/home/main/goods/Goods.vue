@@ -65,7 +65,7 @@
 
 <script>
 // 导入公共组件
-import BreadCrumb from '_com/main/BreadCrumb'
+import BreadCrumb from '_com/main/bread-crumb/BreadCrumb'
 
 import { 
     getGoodsData, 

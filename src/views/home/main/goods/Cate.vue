@@ -94,8 +94,8 @@
 
 <script>
 // 导入公共组件
-import BreadCrumb from '_com/main/BreadCrumb';
-import FromDialog from '_com/main/FromDialog';
+import BreadCrumb from '_com/main/bread-crumb/BreadCrumb';
+import FromDialog from '_com/main/dialog/FromDialog';
 
 // 导入axios方法
 import { 
@@ -341,16 +341,20 @@ export default {
         
         // 获取Cate数据方法
         async getCateList() {
-            await getCateData(this.queryInfo.type, this.queryInfo.pagenum, this.queryInfo.pagesize).then(res => {
-                const cateRes = res.data;
-                if (cateRes.meta.status !== 200) {
-                    return this.$toast.error(cateRes.meta.msg);
-                } else {
-                    this.$toast.success('获取商品分类列表成功！');
-                    this.total = cateRes.data.total;
-                    this.isLoading = false
-                    this.cateList = cateRes.data.result
-                }
+            await getCateData(
+                this.queryInfo.type, 
+                this.queryInfo.pagenum, 
+                this.queryInfo.pagesize
+            ).then(res => {
+            const cateRes = res.data;
+            if (cateRes.meta.status !== 200) {
+                return this.$toast.error(cateRes.meta.msg);
+            } else {
+                this.$toast.success('获取商品分类列表成功！');
+                this.total = cateRes.data.total;
+                this.isLoading = false
+                this.cateList = cateRes.data.result
+            }
             });
         },
         // 获取父级分类数据

@@ -22,7 +22,7 @@ const Rights = ()=>import("_vie/home/main/power/Rights");
 const Roles = ()=>import("_vie/home/main/power/Roles");
 const Goods = ()=>import("_vie/home/main/goods/Goods");
 const Params = ()=>import("_vie/home/main/goods/Params");
-const HandleGoods = ()=>import("_com/main/HandleGoods");
+const HandleGoods = ()=>import("_vie/home/main/goods/HandleGoods");
 const Cate = ()=>import("_vie/home/main/goods/Cate");
 const Orders = ()=>import("_vie/home/main/orders/Orders");
 const Reports = ()=>import("_vie/home/main/reports/Reports");

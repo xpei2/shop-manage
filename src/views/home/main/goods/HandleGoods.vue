@@ -114,7 +114,7 @@
 
 <script>
 // 导入公共组件
-import BreadCrumb from '_com/main/BreadCrumb';
+import BreadCrumb from '_com/main/bread-crumb/BreadCrumb';
 // 导入axios，获取分类数据
 import { getCateData, getParamsData, postAddGoods, getGoodsInfo, putGoodsEdit } from '_new/goods';
 

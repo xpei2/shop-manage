@@ -71,9 +71,9 @@
 
 <script>
 // 导入公共组件
-import BreadCrumb from '_com/main/BreadCrumb';
-import FromDialog from '_com/main/FromDialog';
-import SetDialog from '_com/main/SetDialog';
+import BreadCrumb from '_com/main/bread-crumb/BreadCrumb';
+import FromDialog from '_com/main/dialog/FromDialog';
+import SetDialog from '_com/main/dialog/SetDialog';
 
 // 子组件
 import RolesExpand from './roles-children/RolesExpand'

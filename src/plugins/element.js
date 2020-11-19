@@ -4,6 +4,8 @@ import {
     Form,
     FormItem,
     Input,
+    Radio,
+    RadioGroup,
     CheckboxGroup,
     Checkbox,
     Select,
@@ -38,13 +40,17 @@ import {
     TabPane,
     Step,
     Steps,
-    Upload
+    Upload,
+    Timeline,
+    TimelineItem
 } from "element-ui";
 
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(FormItem);
 Vue.use(Input);
+Vue.use(Radio);
+Vue.use(RadioGroup);
 Vue.use(CheckboxGroup);
 Vue.use(Checkbox);
 Vue.use(Select);
@@ -78,6 +84,8 @@ Vue.use(TabPane);
 Vue.use(Step);
 Vue.use(Steps);
 Vue.use(Upload);
+Vue.use(Timeline);
+Vue.use(TimelineItem);
 
 // 全局注册提示框
 Vue.prototype.$toast = Message;
