@@ -25,7 +25,7 @@ const Params = ()=>import("_vie/home/main/goods/Params");
 const HandleGoods = ()=>import("_vie/home/main/goods/HandleGoods");
 const Cate = ()=>import("_vie/home/main/goods/Cate");
 const Orders = ()=>import("_vie/home/main/orders/Orders");
-const Reports = ()=>import("_vie/home/main/reports/Reports");
+const Report = ()=>import("_vie/home/main/report/Report");
 
 const routes = [
     {
@@ -52,7 +52,7 @@ const routes = [
             {path: '/params', component: Params},
             {path: '/categories', component: Cate},
             {path: '/orders', component: Orders},
-            {path: '/reports', component: Reports},
+            {path: '/reports', component: Report},
         ]
     }
 ];
