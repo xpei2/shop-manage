@@ -29,7 +29,13 @@
                     v-for="subItem in item.children"
                     :index="`/${subItem.path}`"
                     :key="subItem.id"
-                    @click="menuItemClick(`/${subItem.path}`, item.authName, subItem.authName)"
+                    @click="
+                        menuItemClick(
+                            `/${subItem.path}`,
+                            item.authName,
+                            subItem.authName
+                        )
+                    "
                 >
                     <!-- 二级菜单模板区域 -->
                     <template slot="title">
@@ -46,10 +52,10 @@
 
 <script>
 // 导入Vuex
-import { mapMutations } from 'vuex';
+import { mapMutations } from "vuex";
 
 export default {
-    name: 'HomeAside',
+    name: "HomeAside",
     props: {
         menuList: {
             type: Array,
@@ -58,44 +64,41 @@ export default {
             }
         }
     },
-    data(){
+    data() {
         return {
             isCollapse: false,
-            activePath: ''
-        }
+            activePath: ""
+        };
     },
-    created(){
+    created() {
         // 设置本地临时缓存的菜单栏path
-        let path = window.sessionStorage.getItem('menuItemPath');
-        if(path) {
-            this.activePath = path
+        let path = window.sessionStorage.getItem("menuItemPath");
+        if (path) {
+            this.activePath = path;
         }
         // 每次刷新页面获取本地临时缓存导航数据，将保存的字符串转换为对象
-        let nav = JSON.parse(window.sessionStorage.getItem('asideNav'))
+        let nav = JSON.parse(window.sessionStorage.getItem("asideNav"));
         if (nav) {
             this.setSessionAsideNav(nav);
         }
     },
     methods: {
-        ...mapMutations([
-            'setSessionAsideNav',
-            'setBreadCrumb'
-        ]),
+        ...mapMutations(["setSessionAsideNav", "setBreadCrumb"]),
         // 折叠按钮点击事件
         toggleClick() {
             this.isCollapse = !this.isCollapse;
             // 提交折叠按钮点击事件，并传递给父组件折叠状态
-            this.$emit('toggleClick', this.isCollapse)
+            this.$emit("toggleClick", this.isCollapse);
         },
         // 侧栏列表点击的时候保存高亮路径
         menuItemClick(path, nav1, nav2) {
-            window.sessionStorage.setItem('menuItemPath', path);
+            window.sessionStorage.setItem("menuItemPath", path);
             // window.sessionStorage.setItem('menuItemPath', this.$route.path);
             const asideNav = {
                 nav1,
                 nav2,
-                nav3: '',
-            }
+                nav3: ""
+            };
             //提交改变状态管理
             this.setBreadCrumb(asideNav);
         }
@@ -111,7 +114,7 @@ export default {
     font-size: 10px;
     line-height: 24px;
     text-align: center;
-    letter-spacing: .2em;
+    letter-spacing: 0.2em;
     color: #fff;
     background-color: #4a5064;
     cursor: pointer;

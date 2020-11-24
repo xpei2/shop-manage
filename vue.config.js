@@ -8,10 +8,40 @@ module.exports = {
     productionSourceMap: false,
     // 配置规则
     chainWebpack: config => {
-        // 使用配置 html-webpack-plugin 插件 生成发布html标题
-        config.plugin("html").tap(args => {
-            args[0].title = "千羽后台管理系统";
-            return args;
+        // 自定义打包入口，发布模式
+        config.when(process.env.NODE_ENV === "production", config => {
+            config
+                .entry("app")
+                .clear()
+                .add("./src/main-prod.js");
+
+            config.set("externals", {
+                vue: "Vue",
+                "vue-router": "VueRouter",
+                axios: "axios",
+                lodash: "_",
+                echarts: "echarts",
+                nprogress: "NProgress",
+                "vue-quill-editor": "VueQuillEditor"
+            });
+            // 配置 html-webpack-plugin 插件
+            config.plugin("html").tap(args => {
+                args[0].isProd = true;
+                return args;
+            });
+        });
+        // 开发模式
+        config.when(process.env.NODE_ENV === "development", config => {
+            config
+                .entry("app")
+                .clear()
+                .add("./src/main-dev.js");
+
+            // 配置 html-webpack-plugin 插件
+            config.plugin("html").tap(args => {
+                args[0].isProd = false;
+                return args;
+            });
         });
         // 文件夹简写
         config.resolve.alias

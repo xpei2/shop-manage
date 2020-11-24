@@ -29,7 +29,7 @@
 
 <script>
 export default {
-    name: 'FromDialog',
+    name: "FromDialog",
     props: {
         // 是否显示对话框
         isDialog: {
@@ -39,67 +39,67 @@ export default {
         // 对话框标题
         dialogTitle: {
             type: String,
-            default: '暂无标题名'
+            default: "暂无标题名"
         },
         // 对话框表单规则
         dialogFormRules: {
             type: Object,
-            default(){
-                return {}
+            default() {
+                return {};
             }
         },
         // 对话框表单数据
         dialogFormModel: {
             type: Object,
             default() {
-                return {}
+                return {};
             }
         },
         // 对话框label宽度
         dialogLabelWidth: {
             type: String,
-            default: '70px'
+            default: "70px"
         },
         // 判断是编辑还是添加对话框，无值则默认普通对话框
-        dialogType:{
+        dialogType: {
             type: String,
-            default: ''
+            default: ""
         },
         // 对话框距离顶部距离
         dialogTop: {
             type: String,
-            default: '15vh'
-        },
+            default: "15vh"
+        }
     },
-    methods: {      
+    methods: {
         // 对话框取消按钮点击事件
         cancelClick() {
             //提交取消事件
-            this.$emit('cancelClick');
+            this.$emit("cancelClick");
         },
         // 对话框确认按钮点击事件
         submitClick() {
             this.$refs.dialogFormRef.validate(valid => {
-                if(!valid) return;
-                if(this.dialogType === 'add') {
+                if (!valid) return;
+                if (this.dialogType === "add") {
                     // 添加提交确认事件
-                    this.$emit('addSubmitClick');
-                    return
-                }else if(this.dialogType === 'edit') {
+                    this.$emit("addSubmitClick");
+                    return;
+                } else if (this.dialogType === "edit") {
                     // 编辑提交确认事件
-                    this.$emit('editSubmitClick');
-                    return
-                }else {
+                    this.$emit("editSubmitClick");
+                    return;
+                } else {
                     // 直接提交确认事件，无需判断是编辑框还是添加框
-                    this.$emit('submitClick');
+                    this.$emit("submitClick");
                 }
-            })
+            });
         },
         // 监听对话框关闭事件
-        dialogClosed(){
+        dialogClosed() {
             // 重置表单
             this.$refs.dialogFormRef.resetFields();
-        },
+        }
     }
 };
 </script>

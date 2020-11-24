@@ -39,23 +39,23 @@
 
 <script>
 export default {
-    name: 'ParamsExpand',
+    name: "ParamsExpand",
     props: {},
     methods: {
         // 删除对应的参数标签
         removeParams(item, i) {
-            this.$confirm('是否永久删除该标签？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
+            this.$confirm("是否永久删除该标签？", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
             })
                 .then(() => {
                     item.attr_vals.splice(i, 1);
                     // 提交删除事件给父组件
-                    this.$emit('removeParamsAttr', item);
+                    this.$emit("removeParamsAttr", item);
                 })
                 .catch(() => {
-                    this.$toast.info('已取消删除');
+                    this.$message.info("已取消删除");
                 });
         },
         // 展示文本输入框
@@ -68,10 +68,10 @@ export default {
         handleInputConfirm(item) {
             if (item.inputValue.trim().length !== 0) {
                 item.attr_vals.push(item.inputValue.trim());
-                this.$emit('addParamsAttr', item);
+                this.$emit("addParamsAttr", item);
             }
             item.inputVisible = false;
-            item.inputValue = '';
+            item.inputValue = "";
         }
     }
 };

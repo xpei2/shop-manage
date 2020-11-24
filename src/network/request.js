@@ -1,8 +1,9 @@
 import axios from "axios";
+import NProgress from "nprogress";
 
 export function request(config) {
     const instance = axios.create({
-        baseURL: "http://shop.xpei.ren:8888/api/private/v1/",
+        baseURL: "http://119.23.53.78:8888/api/private/v1/",
         timeout: 5000
     });
 
@@ -13,6 +14,8 @@ export function request(config) {
             config.headers.Authorization = window.sessionStorage.getItem(
                 "token"
             );
+            // 展示进度条，NProgress.start()
+            NProgress.start();
             return config;
         },
         err => {
@@ -23,6 +26,9 @@ export function request(config) {
     // 响应拦截
     instance.interceptors.response.use(
         res => {
+            // 隐藏进度条，NProgress.done()
+            NProgress.done();
+            NProgress.done();
             return res;
         },
         err => {

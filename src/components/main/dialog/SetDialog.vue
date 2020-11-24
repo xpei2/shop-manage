@@ -20,7 +20,7 @@
 
 <script>
 export default {
-    name: 'SetDialog',
+    name: "SetDialog",
     props: {
         // 是否显示对话框
         isDialog: {
@@ -30,29 +30,29 @@ export default {
         // 对话框标题
         dialogTitle: {
             type: String,
-            default: ''
+            default: ""
         },
         // 对话框距离顶部距离
         dialogTop: {
             type: String,
-            default: '15vh'
-        },
+            default: "15vh"
+        }
     },
     methods: {
         // 添加用户的表单的取消按钮
         cancelClick() {
             //提交给父组件的关闭事件
-            this.$emit('cancelClick');
+            this.$emit("cancelClick");
         },
         // 添加用户的表单的确认按钮
         submitClick() {
             // 提交确认事件
-            this.$emit('setSubmit');
+            this.$emit("setSubmit");
         },
         // 监听对话框关闭事件
-        dialogClosed(){
-            this.$emit('setDialogClose')
-        },
+        dialogClosed() {
+            this.$emit("setDialogClose");
+        }
     }
 };
 </script>

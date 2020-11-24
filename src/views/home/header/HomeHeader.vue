@@ -10,16 +10,16 @@
 
 <script>
 // 导入清除sessionStorage的方法
-import { sessionStorageRemove } from '_con/utils';
+import { sessionStorageRemove } from "_con/utils";
 export default {
-    name: 'HomeHeader',
+    name: "HomeHeader",
     methods: {
         // 退出账户
         loginOut() {
             // 清除token
-            sessionStorageRemove('token');
+            sessionStorageRemove("token");
             // 跳转到登录页
-            this.$router.push('/login');
+            this.$router.push("/login");
         }
     }
 };

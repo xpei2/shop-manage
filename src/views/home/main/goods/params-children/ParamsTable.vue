@@ -9,7 +9,12 @@
             >{{ paramsSelTxt.addBtnText }}</el-button
         >
         <!-- 表格数据 -->
-        <el-table :data="paramsList" stripe border :max-height="tableMaxHeigth - 100">
+        <el-table
+            :data="paramsList"
+            stripe
+            border
+            :max-height="tableMaxHeigth - 100"
+        >
             <!-- 插入展开内容 -->
             <slot></slot>
             <el-table-column
@@ -37,7 +42,9 @@
                         type="danger"
                         icon="el-icon-delete"
                         size="mini"
-                        @click="removeClick(scope.row.cat_id, scope.row.attr_id)"
+                        @click="
+                            removeClick(scope.row.cat_id, scope.row.attr_id)
+                        "
                         >删除</el-button
                     >
                 </template>
@@ -48,10 +55,10 @@
 
 <script>
 // 导入混入
-import { tableHeightMixin } from '_con/mixin';
+import { tableHeightMixin } from "_con/mixin";
 
 export default {
-    name: 'ParamsTable',
+    name: "ParamsTable",
     props: {
         // 参数数据
         paramsList: {
@@ -63,7 +70,7 @@ export default {
         // 传递过来的参数种类
         paramsSel: {
             type: String,
-            default: 'many'
+            default: "many"
         },
         // 选择的分类数组
         selectdKeys: {
@@ -77,9 +84,9 @@ export default {
     computed: {
         // 选择参数对应的各种文字
         paramsSelTxt() {
-            return this.paramsSel === 'many'
-                ? { addBtnText: '添加参数', paramsName: '参数名称' }
-                : { addBtnText: '添加属性', paramsName: '属性名称' };
+            return this.paramsSel === "many"
+                ? { addBtnText: "添加参数", paramsName: "参数名称" }
+                : { addBtnText: "添加属性", paramsName: "属性名称" };
         },
         // 控制是否禁用添加按钮
         isDisabled() {
@@ -89,15 +96,15 @@ export default {
     methods: {
         // 添加按钮点击事件
         addClick() {
-            this.$emit('addClick')
+            this.$emit("addClick");
         },
         // 编辑按钮点击事件
-        editClick(cateId, attrId){
-            this.$emit('editClick', cateId, attrId)
+        editClick(cateId, attrId) {
+            this.$emit("editClick", cateId, attrId);
         },
         // 删除按钮点击事件
-        removeClick(cateId, attrId){
-            this.$emit('removeClick', cateId, attrId)
+        removeClick(cateId, attrId) {
+            this.$emit("removeClick", cateId, attrId);
         }
     }
 };

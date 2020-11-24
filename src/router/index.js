@@ -14,18 +14,18 @@ VueRouter.prototype.replace = function replace(location) {
 Vue.use(VueRouter);
 
 // 路由组件
-const Login = ()=>import("_vie/login/Login");
-const Home = ()=>import("_vie/home/Home");
-const Welcome = ()=>import("_vie/home/main/Welcome");
-const Users = ()=>import("_vie/home/main/users/Users");
-const Rights = ()=>import("_vie/home/main/power/Rights");
-const Roles = ()=>import("_vie/home/main/power/Roles");
-const Goods = ()=>import("_vie/home/main/goods/Goods");
-const Params = ()=>import("_vie/home/main/goods/Params");
-const HandleGoods = ()=>import("_vie/home/main/goods/HandleGoods");
-const Cate = ()=>import("_vie/home/main/goods/Cate");
-const Orders = ()=>import("_vie/home/main/orders/Orders");
-const Report = ()=>import("_vie/home/main/report/Report");
+const Login = () => import("_vie/login/Login");
+const Home = () => import("_vie/home/Home");
+const Welcome = () => import("_vie/home/main/Welcome");
+const Users = () => import("_vie/home/main/users/Users");
+const Rights = () => import("_vie/home/main/power/Rights");
+const Roles = () => import("_vie/home/main/power/Roles");
+const Goods = () => import("_vie/home/main/goods/Goods");
+const Params = () => import("_vie/home/main/goods/Params");
+const HandleGoods = () => import("_vie/home/main/goods/HandleGoods");
+const Cate = () => import("_vie/home/main/goods/Cate");
+const Orders = () => import("_vie/home/main/orders/Orders");
+const Report = () => import("_vie/home/main/report/Report");
 
 const routes = [
     {
@@ -41,18 +41,18 @@ const routes = [
         path: "/home",
         name: "home",
         component: Home,
-        redirect: '/welcome',
+        redirect: "/welcome",
         children: [
-            {path: '/welcome', component: Welcome},
-            {path: '/users', component: Users},
-            {path: '/roles', component: Roles},
-            {path: '/rights', component: Rights},
-            {path: '/goods', component: Goods},
-            {path: '/goods/:type/:id?', component: HandleGoods},
-            {path: '/params', component: Params},
-            {path: '/categories', component: Cate},
-            {path: '/orders', component: Orders},
-            {path: '/reports', component: Report},
+            { path: "/welcome", component: Welcome },
+            { path: "/users", component: Users },
+            { path: "/roles", component: Roles },
+            { path: "/rights", component: Rights },
+            { path: "/goods", component: Goods },
+            { path: "/goods/:type/:id?", component: HandleGoods },
+            { path: "/params", component: Params },
+            { path: "/categories", component: Cate },
+            { path: "/orders", component: Orders },
+            { path: "/reports", component: Report }
         ]
     }
 ];

@@ -70,7 +70,11 @@ export default {
                         message: "密码不能为空",
                         trigger: "blur"
                     },
-                    { pattern: /^(\w){6,15}$/, message: '密码由6-15个字母、数字、下划线组成', trigger: 'blur'},
+                    {
+                        pattern: /^(\w){6,15}$/,
+                        message: "密码由6-15个字母、数字、下划线组成",
+                        trigger: "blur"
+                    }
                 ]
             }
         };
@@ -86,8 +90,8 @@ export default {
 
                 // 判断返回的状态，进行后续操作
                 if (res.meta.status === 200) {
-                    this.$toast.success("登录成功");
-                    
+                    this.$message.success("登录成功");
+
                     // 1. 将登陆成功之后的token，保存在客户端的sessionStorage中
                     //   1.1 项目中除了登录之外的其他API接口，必须在登录之后才能访问
                     //   1.2 token只应在当前 网站打开期间有效，所以讲token保存在sessionStorage中
@@ -96,7 +100,7 @@ export default {
                     // 通过编程式导航跳转到后台主页，路由地址是/home
                     this.$router.push("/home");
                 } else {
-                    this.$toast.error("登录失败，请检查填写信息是否正确！");
+                    this.$message.error("登录失败，请检查填写信息是否正确！");
                 }
             });
         },

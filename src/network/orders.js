@@ -1,7 +1,7 @@
 import { request } from "./request";
 
 // 获取orders数据
-export function getOrdersData(query,pagenum,pagesize) {
+export function getOrdersData(query, pagenum, pagesize) {
     return request({
         url: "/orders",
         params: {
@@ -16,5 +16,5 @@ export function getOrdersData(query,pagenum,pagesize) {
 export function getProgressData(id) {
     return request({
         url: `/kuaidi/${id}`
-    })
+    });
 }
